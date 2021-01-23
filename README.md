@@ -10,8 +10,7 @@
 
 ```{r}
 devtools::install_github("thebustalab/phylochemistry", quiet = FALSE, force = TRUE)
-packages <- c("phylochemistry")
-lapply(packages, require, character.only = TRUE)
+library(phylochemistry)
 ```
 
 ## VIGNETTE
@@ -26,6 +25,10 @@ The `phylochemistry` package is documented in [this vignette](http://thebustalab
 4. Minor ticks for ggplot2 axes.
 5. Phylogenetic signal for discrete traits.
 6. Analyze multiple sequence alignments for sites associated with user-defined function
+7. Multiple column name, multiple row name data structures (aka "polylists").
+8. Draw annotated multiple sequence alignments.
+9. Use image analysis to automatically get the csv of a mass spectrum from a published image.
+10. Draw chemical structures in R from a csv of molecular coordinates.
 
 ## WRAPPED FEATURES
 

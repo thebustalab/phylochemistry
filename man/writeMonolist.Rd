@@ -7,6 +7,8 @@
 writeMonolist(monolist, monolist_out_path)
 }
 \arguments{
+\item{monolist}{The monolist to write out}
+
 \item{monolist_out_path}{The path to where the monolist should be written}
 }
 \description{
