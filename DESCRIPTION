@@ -1,0 +1,13 @@
+Package: phylochemistry
+Title: Chemical and Sequence Analyses in a Phylogenetic Context
+Version: 0.0.0.9000
+Authors@R: person("Lucas", "Busta", email = "lucasbusta1@gmail.com", role = c("aut", "cre"))
+Description: As biology, chemistry, and genomics expand and overlap, tools are needed to perform concerted analyses of data from these fields. Phylochemistry is written for this purpose.
+Depends: R (>= 3.4.3)
+License: Attribution + ShareAlike; BY-SA
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
