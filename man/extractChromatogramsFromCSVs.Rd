@@ -7,7 +7,7 @@
 extractChromatogramsFromCSVs(paths_to_cdf_csvs, force = FALSE)
 }
 \arguments{
-\item{paths_to_cdf_csvs}{Paths to the}
+\item{paths_to_cdf_csvs}{Paths to the cdf.csvs}
 }
 \description{
 Extract total ion chromatograms from csv files containing mass spectral data

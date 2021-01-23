@@ -4,8 +4,11 @@
 \alias{readPolylist}
 \title{Reads a polylist}
 \usage{
-readPolylist(polylist_in_path, centroid = "~~~",
-  table_value_unit = "abundance")
+readPolylist(
+  polylist_in_path,
+  centroid = "~~~",
+  table_value_unit = "abundance"
+)
 }
 \arguments{
 \item{polylist_in_path}{The path to the polylist (in .csv format) to be read}

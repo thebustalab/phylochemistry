@@ -4,8 +4,12 @@
 \alias{writeSupplementalTable}
 \title{Writes a human-readable supplemental table of quantitative data}
 \usage{
-writeSupplementalTable(supplementalTable, round_level, file_out_path,
-  replicates)
+writeSupplementalTable(
+  supplementalTable,
+  round_level,
+  file_out_path,
+  replicates
+)
 }
 \arguments{
 \item{supplementalTable}{The data to write out}

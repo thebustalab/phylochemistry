@@ -9,7 +9,7 @@
 `phylochemistry` is currently only available from this page. Install it using devtools:
 
 ```{r}
-devtools::install_github("LucasBusta/phylochemistry", quiet = FALSE, force = TRUE)
+devtools::install_github("thebustalab/phylochemistry", quiet = FALSE, force = TRUE)
 packages <- c("phylochemistry")
 lapply(packages, require, character.only = TRUE)
 ```

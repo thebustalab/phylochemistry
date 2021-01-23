@@ -4,11 +4,20 @@
 \alias{buildTree}
 \title{Construct various types of phylogenetic trees from alignments or other trees}
 \usage{
-buildTree(scaffold_type = c("amin_alignment", "nucl_alignment",
-  "newick"), scaffold_in_path, members = NULL, gblocks = FALSE,
-  gblocks_path = NULL, ml = FALSE, model_test = FALSE,
-  bootstrap = FALSE, rois = FALSE, rois_data = NULL,
-  ancestral_states = FALSE, root = NULL)
+buildTree(
+  scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
+  scaffold_in_path,
+  members = NULL,
+  gblocks = FALSE,
+  gblocks_path = NULL,
+  ml = FALSE,
+  model_test = FALSE,
+  bootstrap = FALSE,
+  rois = FALSE,
+  rois_data = NULL,
+  ancestral_states = FALSE,
+  root = NULL
+)
 }
 \arguments{
 \item{scaffold_type}{The type of information that should be used to build the tree. One of "amin_alignment", "nucl_alignment", or "newick"}
@@ -19,7 +28,7 @@ buildTree(scaffold_type = c("amin_alignment", "nucl_alignment",
 
 \item{gblocks}{TRUE/FALSE whether to use gblocks on the alignment}
 
-\item{gblocks_path}{Path to the gblocks module}
+\item{gblocks_path}{Path to the gblocks module, perhaps something like "/Users/lucasbusta/Documents/Science/_Lab_Notebook/Bioinformatics/programs/Gblocks_0.91b/Gblocks"}
 
 \item{ml}{TRUE/FALSE whether to use maximum likelihood when constructing the tree.}
 

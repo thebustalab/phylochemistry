@@ -4,8 +4,7 @@
 \alias{generateTicks}
 \title{Create major and minor axes ticks and labels}
 \usage{
-generateTicks(major_ticks, minor_freq = 4, major_tick_size,
-  minor_tick_size)
+generateTicks(major_ticks, minor_freq = 4, major_tick_size, minor_tick_size)
 }
 \arguments{
 \item{major_ticks}{Values at which major ticks should be generated}

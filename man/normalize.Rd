@@ -4,8 +4,7 @@
 \alias{normalize}
 \title{Normalizes a vector of numbers to a range of zero to one.}
 \usage{
-normalize(x, old_min = NULL, old_max = NULL, new_min = 0,
-  new_max = 1)
+normalize(x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1)
 }
 \arguments{
 \item{x}{The vector to normalize}

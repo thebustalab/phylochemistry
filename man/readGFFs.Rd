@@ -4,10 +4,17 @@
 \alias{readGFFs}
 \title{readGFFs}
 \usage{
-readGFFs(input_frame, subset_mode = c("none", "goi_only", "foi_only",
-  "goi_region", "foi_region", "name_check"), goi = NULL, foi = NULL,
-  region_reach = 2e+05, concatenate_by_species = TRUE,
-  concatenation_spacing = 10000, omit = NULL)
+readGFFs(
+  input_frame,
+  subset_mode = c("none", "goi_only", "foi_only", "goi_region", "foi_region",
+    "name_check"),
+  goi = NULL,
+  foi = NULL,
+  region_reach = 2e+05,
+  concatenate_by_species = TRUE,
+  concatenation_spacing = 10000,
+  omit = NULL
+)
 }
 \arguments{
 \item{input_frame}{A dataframe with columns: Genus_species, GFF_in_path, region_reach, concatenation_spacing}

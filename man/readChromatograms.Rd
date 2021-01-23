@@ -4,8 +4,11 @@
 \alias{readChromatograms}
 \title{Import chromatograms stored as ChemStation exported .csv files}
 \usage{
-readChromatograms(dir, normalize_level = c("none", "var1", "var2"),
-  normalize_range = NULL)
+readChromatograms(
+  dir,
+  normalize_level = c("none", "var1", "var2"),
+  normalize_range = NULL
+)
 }
 \arguments{
 \item{dir}{A directory containing (ONLY) the chromatogram(s) that are to be plotted}

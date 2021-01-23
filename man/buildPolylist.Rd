@@ -4,9 +4,13 @@
 \alias{buildPolylist}
 \title{Build a human-readable matrix of samples, analytes, and measurements}
 \usage{
-buildPolylist(samples_monolist_in_path, analytes_monolist_in_path,
-  measurements_monolist_in_path = NULL, centroid = "~~~",
-  polylist_out_path)
+buildPolylist(
+  samples_monolist_in_path,
+  analytes_monolist_in_path,
+  measurements_monolist_in_path = NULL,
+  centroid = "~~~",
+  polylist_out_path
+)
 }
 \arguments{
 \item{samples_monolist_in_path}{The monolist of samples to be used in building the polylist. Should contain a column "sample_unique_ID".}

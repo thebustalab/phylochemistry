@@ -4,8 +4,14 @@
 \alias{convertCDFstoCSVs}
 \title{Convert mass spectral datafiles (CDF) into a csv file}
 \usage{
-convertCDFstoCSVs(paths_to_cdfs, min_mz, max_mz, min_rt, max_rt,
-  force = FALSE)
+convertCDFstoCSVs(
+  paths_to_cdfs,
+  min_mz = 50,
+  max_mz = 800,
+  min_rt = NULL,
+  max_rt = NULL,
+  force = FALSE
+)
 }
 \arguments{
 \item{paths_to_cdfs}{Paths to CDF files}
@@ -14,9 +20,9 @@ convertCDFstoCSVs(paths_to_cdfs, min_mz, max_mz, min_rt, max_rt,
 
 \item{max_mz}{Largest m/z value to process (acts like a filter)}
 
-\item{min_rt}{Smallest retention time to process (acts like a filter)}
+\item{min_rt}{(optional) Smallest retention time to process (acts like a filter)}
 
-\item{max_rt}{Largest retention time to process (acts like a filter)}
+\item{max_rt}{(optional) Largest retention time to process (acts like a filter)}
 
 \item{force}{Convert all CDF files, even if they've already been converted previously}
 }

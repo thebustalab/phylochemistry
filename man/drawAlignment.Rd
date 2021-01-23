@@ -4,13 +4,28 @@
 \alias{drawAlignment}
 \title{Generate a multiple alignment graphic using ggplot}
 \usage{
-drawAlignment(infile, seqlist, alignment_labels, wrap = FALSE,
-  wrap_length = NULL, roi = FALSE, roi_data = NULL,
-  consensus = FALSE, consensus_height = 5, funct_assoc = FALSE,
-  funct_assoc_data = NULL, funct_assoc_height = 5,
-  highlights = FALSE, highlights_data = NULL, hlines = FALSE,
-  hlines_data = NULL, tick_spacing = 5, ticks_text_size = 30,
-  order = NULL, color_pal = NULL)
+drawAlignment(
+  infile,
+  seqlist,
+  alignment_labels,
+  wrap = FALSE,
+  wrap_length = NULL,
+  roi = FALSE,
+  roi_data = NULL,
+  consensus = FALSE,
+  consensus_height = 5,
+  funct_assoc = FALSE,
+  funct_assoc_data = NULL,
+  funct_assoc_height = 5,
+  highlights = FALSE,
+  highlights_data = NULL,
+  hlines = FALSE,
+  hlines_data = NULL,
+  tick_spacing = 5,
+  ticks_text_size = 30,
+  order = NULL,
+  color_pal = NULL
+)
 }
 \arguments{
 \item{infile}{The alignment to use (fasta file)}
