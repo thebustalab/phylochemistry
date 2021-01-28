@@ -13,6 +13,8 @@ devtools::install_github("thebustalab/phylochemistry", quiet = FALSE, force = TR
 library(phylochemistry)
 ```
 
+If you need help installing devtools, please visit [this page](https://www.r-project.org/nosvn/pandoc/devtools.html).
+
 ## VIGNETTE
 
 The `phylochemistry` package is documented in [this vignette](http://thebustalab.github.io/phylochemistry/docs/index.html).
