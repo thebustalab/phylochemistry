@@ -6,14 +6,26 @@
 
 ## INSTALL
 
-`phylochemistry` is currently only available from this page. Install it using devtools:
+`phylochemistry` can be installed by following these four steps:
 
+1. Install `msa` and `phangorn` by running the following code in R
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install("msa")
+BiocManager::install("phangorn")
+```
+2. Install `devtools` by running the following code in R
+```{r}
+install.packages("devtools")
+```
+3. (for Windows) [install RTools](https://cran.r-project.org/bin/windows/Rtools/)
+3. (for Mac) install XCode via the Mac AppStore
+
+4. Install `phylochemistry`
 ```{r}
 devtools::install_github("thebustalab/phylochemistry", quiet = FALSE, force = TRUE)
 library(phylochemistry)
 ```
-
-If you need help installing devtools, please visit [this page](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
 ## VIGNETTE
 
