@@ -18,10 +18,10 @@ BiocManager::install("phangorn")
 ```{r}
 install.packages("devtools")
 ```
-3. (for Windows) [install RTools](https://cran.r-project.org/bin/windows/Rtools/)
-3. (for Mac) install XCode via the Mac AppStore
+3. (for Windows only) [install RTools](https://cran.r-project.org/bin/windows/Rtools/)
+4. (for Mac only) install XCode via the Mac AppStore
 
-4. Install `phylochemistry`
+5. Restart R and install `phylochemistry`
 ```{r}
 devtools::install_github("thebustalab/phylochemistry", quiet = FALSE, force = TRUE)
 library(phylochemistry)
