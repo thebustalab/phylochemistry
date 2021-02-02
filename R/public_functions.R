@@ -1054,7 +1054,7 @@
 
         #' BLAST search local transcriptomes
         #'
-        #' Search locally stored transcriptomes for query sequences.
+        #' Search locally stored transcriptomes for query sequences. Download Blast+ here: https://www.ncbi.nlm.nih.gov/books/NBK279671/
         #' @param transcriptomes A list of paths to the transcriptomes that should be searched, named by taxonomic identifier (e.g. species names)
         #' @param initial_query_in_path Path to a fasta file containing the query
         #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
@@ -1681,7 +1681,6 @@
 	                    cat("   Writing out data file as CSV... \n")
 	                        data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
 	                }
-
 	            }
             }
 
@@ -1690,31 +1689,49 @@
         #' Extract total ion chromatograms from csv files containing mass spectral data
         #'
         #' @param paths_to_cdf_csvs Paths to the cdf.csvs
+        #' @param path_to_existing_chromatograms_csv Path to an existing chromatograms.csv file. The function will append new chromatograms to this file that are not already in it.
         #' @examples
         #' @export
         #' extractChromatogramsFromCSVs
 
-            extractChromatogramsFromCSVs <- function( paths_to_cdf_csvs, force = FALSE ) {
+            extractChromatogramsFromCSVs <- function( paths_to_cdf_csvs, path_to_existing_chromatograms_csv = NULL ) {
 
-                chromatograms <- list()
-                for ( file in 1:length(paths_to_cdf_csvs) ) {
+                ## If the chromatograms.csv already exists, figure out which chromatograms are already in there and don't analyze those
+                    if ( is.null(path_to_existing_chromatograms_csv) == FALSE ) {
+                        paths_to_cdf_csvs <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist(path_to_existing_chromatograms_csv)$path_to_cdf_csv)]
+                    }
 
-                    cat(paste("Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))
-                        framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
+                ## Extract the chromatograms from the full dataset
+                    chromatograms <- list()
+                    for ( file in 1:length(paths_to_cdf_csvs) ) {
 
-                    cat("   Extracting the total ion chromatogram...\n")
-                        library(plyr)
-                        chromatogram <- plyr::ddply(framedDataFile, .(rt), summarize, tic = sum(intensity))
-                        chromatogram$rt <- as.numeric(chromatogram$rt)
-                        chromatogram$path_to_cdf_csv <- paths_to_cdf_csvs[file]
+                        cat(paste("Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))
+                            framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
 
-                    cat("   Appending chromatogram to list...\n")
-                        chromatograms[[file]] <- chromatogram
-                }
+                        cat("   Extracting the total ion chromatogram...\n")
+                            library(plyr)
+                            chromatogram <- plyr::ddply(framedDataFile, .(rt), summarize, tic = sum(intensity))
+                            chromatogram$rt <- as.numeric(chromatogram$rt)
+                            chromatogram$path_to_cdf_csv <- paths_to_cdf_csvs[file]
 
-                chromatograms <- do.call(rbind, chromatograms)
+                        cat("   Appending chromatogram to list...\n")
+                            chromatograms[[file]] <- chromatogram
+                    }
 
-                return( chromatograms )
+                    chromatograms <- do.call(rbind, chromatograms)
+
+                ## If the chromatograms file already exists, append to it, otherwise, return the chromatograms 
+                    if ( is.null(path_to_existing_chromatograms_csv) == FALSE ) {
+                        writeMonolist(
+                            monolist = rbind(
+                                readMonolist(path_to_existing_chromatograms_csv),
+                                chromatograms
+                            ),
+                            monolist_out_path = path_to_existing_chromatograms_csv
+                        )
+                    } else {
+                        return( chromatograms )        
+                    }                
             }
 
     #### integrationApp

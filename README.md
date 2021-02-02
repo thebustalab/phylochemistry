@@ -12,11 +12,23 @@
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install("msa")
+BiocManager::install("ggtree")
 BiocManager::install("phangorn")
+BiocManager::install("seqinr")
+BiocManager::install("Biostrings")
+BiocManager::install("GenomicRanges")
 ```
-2. Install `devtools` by running the following code in R
+2. Install prequisite R packages by running the following code in R
 ```{r}
 install.packages("devtools")
+install.packages("tidyverse")
+install.packages("DT")
+install.packages("RColorBrewer")
+install.packages("xcms")
+install.packages("data.table")
+install.packages("rhandsontable")
+install.packages("ape")
+install.packages("ips")
 ```
 3. (for Windows only) [install RTools](https://cran.r-project.org/bin/windows/Rtools/)
 4. (for Mac only) install XCode via the Mac AppStore
