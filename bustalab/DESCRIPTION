@@ -1,0 +1,13 @@
+Package: bustalab
+Title: Busta Lab Tools Built on 'phylochemistry'
+Version: 0.1.0
+Authors@R: person("Lucas", "Busta", email = "bust0037@d.umn.edu", role = c("aut", "cre"))
+Description: Lab tools for the Busta lab: the full-featured GC-MS / GC-TCD peak
+    integration app, a GenomeScope genome-size estimator, a client for the lab's
+    'dgx' language-model servers, and cached download helpers for lab reference
+    datasets. Attaching this package also attaches 'phylochemistry'.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 4.1.0),
+    phylochemistry
