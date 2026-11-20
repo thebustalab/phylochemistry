@@ -11,8 +11,11 @@
 # unconditionally from phylochemistry.R, and it deliberately needs only packages
 # that are already in the CORE scope (httr, jsonlite, readr, dplyr, tibble) so it
 # adds no install burden for a chapters-1-11 student.
-
-message("Loading dgx module...")
+#
+# In the bustalab package (2026-11) the public API is frozen: dgxGenerate(),
+# runModelGrid(), dgxHealth(), dgxGridStatus(), dgxMaxGridCells(). The dot-functions
+# stay internal. The URLs below are localhost tunnel defaults, overridable by the
+# DGX_*_URL environment variables.
 
         # These reach the lab's dgx through SSH tunnels that already exist on host1:
         #   9000 = ESM2 protein embeddings, 9001 = ESMC, 9002 = Gemma text generation.
@@ -23,6 +26,24 @@ message("Loading dgx module...")
         # which takes about 3 minutes. Answering a prompt then takes under a second. So never
         # loop model-inside-prompt; use runModelGrid(), which groups by model.
 
+        #' Generate text on the lab's dgx server
+        #'
+        #' Sends one prompt to the dgx generate endpoint (an SSH tunnel on the lab's
+        #' JupyterHub) and returns the parsed JSON reply. If the server answers 503
+        #' "memory_admission" the call waits and retries for up to `max_wait_sec`.
+        #'
+        #' @param prompt Prompt text.
+        #' @param model Model id, e.g. "google/gemma-4-12B-it"; `NULL` uses the server default.
+        #' @param quant Quantisation: 4 = nf4, 8 = int8, 16 = bf16.
+        #' @param max_tokens Maximum tokens to generate.
+        #' @param system Optional system prompt.
+        #' @param logprobs Optional 1-3: return token log-probabilities (needs `max_tokens <= 512`).
+        #' @param server_url Base URL of the generate server (env `DGX_GENERATE_URL`).
+        #' @param timeout_sec Request timeout in seconds; a cold model load takes about 180 s.
+        #' @param max_wait_sec Longest total wait for memory admission, in seconds; 0 fails at once.
+        #' @param on_wait Internal: a function called before and after each memory wait.
+        #' @return A list parsed from the server's JSON reply (`completion`, `duration_sec`, ...).
+        #' @export
         dgxGenerate <- function(
           prompt,
           model = NULL,          # e.g. "google/gemma-4-12B-it"; NULL = server default
@@ -43,7 +64,6 @@ message("Loading dgx module...")
           max_wait_sec = as.numeric(Sys.getenv("DGX_MEMORY_WAIT_SEC", 4 * 3600)),
           on_wait = NULL         # internal: called before and after each memory wait
         ) {
-          suppressPackageStartupMessages({ library(httr); library(jsonlite) })
           payload <- list(prompt = prompt, max_tokens = max_tokens)
           if (!is.null(model))  payload$model  <- model
           if (!is.null(quant))  payload$quant  <- as.integer(quant)
@@ -92,7 +112,11 @@ message("Loading dgx module...")
         # absurdly large grid, and stops a run failing every prompt. These guards mirror
         # dgx_client.py exactly — keep the two sides in step.
 
-        dgxMaxGridCells  <- function() as.numeric(Sys.getenv("DGX_MAX_GRID_CELLS", "5000"))
+        #' Largest grid runModelGrid() will start
+        #'
+        #' @return The cell limit (env `DGX_MAX_GRID_CELLS`, default 5000).
+        #' @export
+        dgxMaxGridCells  <- function()as.numeric(Sys.getenv("DGX_MAX_GRID_CELLS", "5000"))
 
         # Seconds since the generate server last answered anyone; NA if we cannot reach it.
         .dgxServerIdle <- function(
@@ -108,13 +132,17 @@ message("Loading dgx module...")
 
         # Can I start a grid right now? The broker queues everyone's calls, so another grid
         # running is not a reason to wait: yours takes its turn.
+        #' Report whether the dgx generate server is reachable and busy
+        #'
+        #' @return `NULL`, invisibly; the status is printed as a message.
+        #' @export
         dgxGridStatus <- function() {
           idle <- .dgxServerIdle()
           if (is.na(idle)) message("Server: could not reach the generate endpoint.")
           else if (idle < 300)
             message("Server: up, last answered a call ", round(idle), " s ago. Calls are queued, ",
-                    "so you can start anyway — yours will take its turn.")
-          else message("Server: up and quiet — idle for ", round(idle / 60), " min.")
+                    "so you can start anyway \u2014 yours will take its turn.")
+          else message("Server: up and quiet \u2014 idle for ", round(idle / 60), " min.")
           invisible(NULL)
         }
 
@@ -127,7 +155,7 @@ message("Loading dgx module...")
             "    decide which (model, quant) actually works, then run everything through that\n",
             "    ONE cell."))
           if (is.na(.dgxServerIdle())) problems <- c(problems, paste0(
-            "Cannot reach the generate server. Run dgxHealth() first — starting a grid\n",
+            "Cannot reach the generate server. Run dgxHealth() first \u2014 starting a grid\n",
             "    against a dead server just fills the CSV with errors."))
           if (verbose) { message("Pre-flight check (same as dgxGridStatus()):"); dgxGridStatus() }
           if (!length(problems)) return(invisible(NULL))
@@ -151,6 +179,25 @@ message("Loading dgx module...")
         # IT WILL REFUSE TO START if the server is unreachable or the grid is larger than
         # DGX_MAX_GRID_CELLS (pass force = TRUE if you are sure about the size). Someone else's
         # grid running is fine: the dgx broker queues both and they take turns.
+        #' Run every prompt against every (model, quantisation) on the dgx
+        #'
+        #' Batched by cell, resumable (re-running skips rows that succeeded and retries
+        #' failed ones) and refuses to start against an unreachable server or a grid
+        #' larger than [dgxMaxGridCells()] unless `force = TRUE`.
+        #'
+        #' @param prompts Character vector of prompts.
+        #' @param models Model ids.
+        #' @param quants Quantisations (4, 8, 16).
+        #' @param out_csv Results CSV, appended after every prompt.
+        #' @param max_tokens Maximum tokens per generation.
+        #' @param system Optional system prompt.
+        #' @param labels Prompt ids; defaults to `seq_along(prompts)`.
+        #' @param verbose Print progress.
+        #' @param force Start even if the pre-flight check fails.
+        #' @param max_consecutive_errors Stop after this many failures in a row.
+        #' @param logprobs Optional 1-3, as in [dgxGenerate()]; adds two columns.
+        #' @return `out_csv`, invisibly.
+        #' @export
         runModelGrid <- function(
           prompts,
           models = c("google/gemma-4-E2B-it", "google/gemma-4-E4B-it",
@@ -169,7 +216,6 @@ message("Loading dgx module...")
           # classification). Changing it needs a fresh out_csv, since the columns differ.
           logprobs = NULL
         ) {
-          suppressPackageStartupMessages({ library(readr); library(dplyr); library(tibble) })
           if (is.null(labels)) labels <- as.character(seq_along(prompts))
           if (length(labels) != length(prompts)) stop("labels must match prompts in length")
 
@@ -205,7 +251,7 @@ message("Loading dgx module...")
           for (m in models) for (q in quants) {
             keep <- !(paste(m, q, labels) %in% done_keys)
             if (!any(keep)) { if (verbose) message("[skip] ", m, " @ ", q, "-bit"); next }
-            if (verbose) message("\n[cell] ", m, " @ ", q, "-bit — ", sum(keep),
+            if (verbose) message("\n[cell] ", m, " @ ", q, "-bit \u2014 ", sum(keep),
                                  " prompts\n       loading the model, ~3 minutes...")
             for (i in which(keep)) {
               failed <- FALSE
@@ -235,11 +281,11 @@ message("Loading dgx module...")
               if (consecutive_errors >= max_consecutive_errors) {
                 message("\nSTOPPED after ", consecutive_errors, " failures in a row. ",
                         "The last one was:\n    ", row$error[1],
-                        "\nNothing is being generated, so there is no point continuing — the ",
+                        "\nNothing is being generated, so there is no point continuing \u2014 the ",
                         "rest of the grid\nwould just fill ", out_csv, " with the same error.",
                         "\nCheck the server with dgxHealth(), then re-run this same cell: the ",
                         "failed rows\nwill be retried automatically.")
-                stop(consecutive_errors, " consecutive failures — run stopped. Last error: ",
+                stop(consecutive_errors, " consecutive failures \u2014 run stopped. Last error: ",
                      row$error[1], call. = FALSE)
               }
               if (verbose && (n %% 10 == 0)) message("       ", n, "/", total, " overall")
@@ -249,8 +295,11 @@ message("Loading dgx module...")
           invisible(out_csv)
         }
 
+        #' Check the dgx endpoints (generate, ESM2, ESMC)
+        #'
+        #' @return `NULL`, invisibly; one status line per endpoint is printed as a message.
+        #' @export
         dgxHealth <- function() {
-          suppressPackageStartupMessages(library(httr))
           urls <- c(
             generate = Sys.getenv("DGX_GENERATE_URL", "http://127.0.0.1:9002"),
             esm2     = Sys.getenv("DGX_ESM2_URL",     "http://127.0.0.1:9000"),
@@ -267,5 +316,3 @@ message("Loading dgx module...")
           }
           invisible(NULL)
         }
-
-message("Done with dgx loading!")

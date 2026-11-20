@@ -1604,6 +1604,40 @@
 #### it. It is reported ALONGSIDE the v5 TIC `area`, never instead of it, so
 #### existing numbers stay comparable.
 
+    #' Interactive GC-MS / GC-TCD peak integration app (version 7)
+    #'
+    #' Opens a folder of ANDI-MS or ANDI-Chrom `.CDF` files, builds the
+    #' chromatograms, and serves a Shiny app for baseline correction, peak
+    #' detection and integration, all-ion views, co-elution splits and peak
+    #' labelling. **The app sets the working directory to `CDF_directory_path`
+    #' and writes its state there** (`<file>.CDF.csv`, `chromatograms.csv`,
+    #' `samples_monolist.csv`, `peaks_monolist.csv`, caches and stamps).
+    #'
+    #' @param CDF_directory_path Folder holding the `.CDF` files.
+    #' @param zoom_and_scroll_rate Ignored; kept so old calls still run.
+    #' @param baseline_window Baseline window, in scans, for new samples.
+    #' @param samples_per_page Samples drawn per page.
+    #' @param compact Ignored (Overview mode was removed); kept so old calls still run.
+    #' @param x_axis_start_default,x_axis_end_default Initial x window (retention time).
+    #' @param path_to_reference_library Unused; kept so old calls still run.
+    #' @param samples_monolist_subset Optional subset of samples to load.
+    #' @param ions Extra ions to extract; the TIC (ion 0) is always extracted.
+    #' @param all_ion_view Start in the all-ion display.
+    #' @param all_ion_threshold Ion-inclusion threshold for the all-ion views.
+    #' @param all_ion_scaling Initial y scaling for the all-ion views.
+    #' @param all_ion_max_points Maximum x points drawn per trace in the all-ion views.
+    #' @param integrate_peak_ions Compute `area_peak_ions` alongside `area`.
+    #' @param score_peak_confidence Compute spectrum-agreement confidence squares.
+    #' @param confidence_thresholds Agreement thresholds for the confidence squares.
+    #' @param coelution_crosstalk Supplied cross-talk for two-compound co-elution splits.
+    #' @param facet_label_size,facet_label_wrap Sample-name strip size and wrap width.
+    #' @param n_cores Cores for parallel prefetch (`NULL` = min(8, cores - 2); 1 = serial).
+    #' @param ms_classifier_path Path to the Python peak classifier used by Shift+4;
+    #'   `NULL` or a missing file skips classification.
+    #' @param jupyter If `TRUE`, serve the app on a free port from the lab's proxied
+    #'   pool and print its URL; if `FALSE`, return the `shinyApp` object.
+    #' @return With `jupyter = FALSE`, a `shiny.appobj`; otherwise the app is run.
+    #' @export
     analyzeGCMSdata7 <- function(
         CDF_directory_path = getwd(),
         zoom_and_scroll_rate = 100,
@@ -5305,7 +5339,7 @@
                             if (is.null(b)) return("")
                             if (b$n == 0) return("No samples loaded")
                             paste0("Page ", b$pg, " / ", b$n_pages,
-                                   "   (samples ", b$lo, "–", b$hi, " of ", b$n, ")")
+                                   "   (samples ", b$lo, "\u2013", b$hi, " of ", b$n, ")")
                         })
 
                     ## The chromatogram plot itself - reactive on redraw_trigger (Shift+Q)

@@ -7,7 +7,49 @@ Description: Lab tools for the Busta lab: the full-featured GC-MS / GC-TCD peak
     'dgx' language-model servers, and cached download helpers for lab reference
     datasets. Attaching this package also attaches 'phylochemistry'.
 License: MIT + file LICENSE
+URL: https://github.com/thebustalab/phylochemistry
+BugReports: https://github.com/thebustalab/phylochemistry/issues
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+biocViews: Software, MassSpectrometry, Metabolomics
 Depends:
     R (>= 4.1.0),
     phylochemistry
+Imports:
+    ape,
+    data.table,
+    dplyr,
+    DT,
+    ggplot2,
+    graphics,
+    grDevices,
+    grid,
+    httpuv,
+    httr,
+    jsonlite,
+    minpack.lm,
+    ncdf4,
+    parallel,
+    readr,
+    rhandsontable,
+    scales,
+    shiny,
+    shinythemes,
+    stats,
+    tibble,
+    tidyr,
+    tools,
+    utils,
+    xcms
+Suggests:
+    DESeq2,
+    FNN,
+    GenomicFeatures,
+    GenomicRanges,
+    msa,
+    Rsamtools,
+    rtracklayer,
+    testthat (>= 3.0.0),
+    XML
+Config/testthat/edition: 3

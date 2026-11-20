@@ -1,5 +1,20 @@
 ###### GENOMESCOPE FUNCTIONS #######
 
+## Package note: these helpers are internal (the @export tags they carried as a sourced
+## script are now @noRd). genomeScope()'s nlsLM formula names predictP_T() as text, and
+## the formula is evaluated in genomeScope()'s frame, so they resolve in the namespace.
+
+## min_max / min_max1 are also defined inside genomeScope(); eval_model() needs them at
+## package level too, or it fails with "could not find function" whenever a fit converges.
+
+  min_max <- function(table) {
+    return (c(max(0,table[1] - 2*table[2]), table[1]+ 2*table[2]))
+  }
+
+  min_max1 <- function(table) {
+    return (c(max(0,table[1] - 2*table[2]), min(1, table[1]+ 2*table[2])))
+  }
+
 ## eval_model (medium)
 
   #' Evaluate distinct model forms, in order to resolve ambiguity of which peak is the homozygous peak
@@ -12,7 +27,7 @@
   #' @param arguments A data frame of the user-specified inputs.
   #' @return A list (nls, nlsscore) where nls is the nlsLM model object (with some additional components)
   #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
-  #' @export
+  #' @noRd
 
   eval_model<-function(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments, score_close) {
     
@@ -210,7 +225,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict1_0 = function(k, d, kmercov, bias, x)
   {
     predict1_1(k, d, kmercov, bias, x)
@@ -224,7 +239,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict1_0_unique = function(k, d, kmercov, bias, x)
   {
     predict1_1_unique(k, d, kmercov, bias, x)
@@ -238,7 +253,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict1_1 = function(k, d, kmercov, bias, x)
   {
     r0 = 1
@@ -259,7 +274,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict1_1_unique = function(k, d, kmercov, bias, x)
   {
     r0 = 1
@@ -280,7 +295,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict2_0 = function(r1, k, d, kmercov, bias, x)
   {
     predict2_1(r1, k, d, kmercov, bias, x)
@@ -296,7 +311,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict2_0_unique = function(r1, k, d, kmercov, bias, x)
   {
     predict2_1_unique(r1, k, d, kmercov, bias, x)
@@ -312,7 +327,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict2_1 = function(r1, k, d, kmercov, bias, x)
   {
     r0 = 1-r1 #aa
@@ -340,7 +355,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict2_1_unique = function(r1, k, d, kmercov, bias, x)
   {
     r0 = 1-r1
@@ -364,7 +379,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict3_0 = function(r1, r2, k, d, kmercov, bias, x)
   {
     predict3_1(r1, r2, k, d, kmercov, bias, x)
@@ -380,7 +395,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict3_0_unique = function(r1, r2, k, d, kmercov, bias, x)
   {
     predict3_1_unique(r1, r2, k, d, kmercov, bias, x)
@@ -396,7 +411,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict3_1 = function(r1, r2, k, d, kmercov, bias, x)
   {
     r0 = 1-r1-r2 #aaa
@@ -430,7 +445,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict3_1_unique = function(r1, r2, k, d, kmercov, bias, x)
   {
     r0 = 1-r1-r2
@@ -458,7 +473,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict4_0 = function(raaab, raabb, raabc, rabcd, k, d, kmercov, bias, x)
   {
     raaaa = 1-raaab-raabb-raabc-rabcd
@@ -500,7 +515,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict4_0_unique = function(raaab, raabb, raabc, rabcd, k, d, kmercov, bias, x)
   {
     raaaa = 1-raaab-raabb-raabc-rabcd
@@ -534,7 +549,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict4_1 = function(raaab, raabc, rabcd, k, d, kmercov, bias, x)
   {
     raaaa = 1-raaab-raabc-rabcd
@@ -574,7 +589,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict4_1_unique = function(raaab, raabc, rabcd, k, d, kmercov, bias, x)
   {
     raaaa = 1-raaab-raabc-rabcd
@@ -606,7 +621,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict4_2 = function(raabb, raabc, rabcd, k, d, kmercov, bias, x)
   {
     raaaa = 1-raabb-raabc-rabcd
@@ -646,7 +661,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict4_2_unique = function(raabb, raabc, rabcd, k, d, kmercov, bias, x)
   {
     raaaa = 1-raabb-raabc-rabcd
@@ -677,7 +692,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_0 = function(raaaab, raaabb, raaabc, raabbc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaaab-raaabb-raaabc-raabbc-raabcd-rabcde
@@ -726,7 +741,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_0_unique = function(raaaab, raaabb, raaabc, raabbc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaaab-raaabb-raaabc-raabbc-raabcd-rabcde
@@ -765,7 +780,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_1 = function(raaaab, raaabc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaaab-raaabc-raabcd-rabcde
@@ -810,7 +825,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_1_unique = function(raaaab, raaabc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaaab-raaabc-raabcd-rabcde
@@ -845,7 +860,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_2 = function(raaaab, raabbc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaaab-raabbc-raabcd-rabcde
@@ -890,7 +905,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_2_unique = function(raaaab, raabbc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaaab-raabbc-raabcd-rabcde
@@ -925,7 +940,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_3 = function(raaabb, raaabc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaabb-raaabc-raabcd-rabcde
@@ -970,7 +985,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_3_unique = function(raaabb, raaabc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaabb-raaabc-raabcd-rabcde
@@ -1005,7 +1020,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_4 = function(raaabb, raabcc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaabb-raabcc-raabcd-rabcde
@@ -1050,7 +1065,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_4_unique = function(raaabb, raabcc, raabcd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaabb-raabcc-raabcd-rabcde
@@ -1085,7 +1100,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_5 = function(raaabb, raabcc, rabcdd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaabb-raabcc-rabcdd-rabcde
@@ -1130,7 +1145,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict5_5_unique = function(raaabb, raabcc, rabcdd, rabcde, k, d, kmercov, bias, x)
   {
     raaaaa = 1-raaabb-raabcc-rabcdd-rabcde
@@ -1165,7 +1180,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_0 = function(raaaaab, raaaabb, raaabbb, raaaabc, raaabbc, raabbcc, raaabcd, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa = 1-raaaaab-raaaabb-raaabbb-raaaabc-raaabbc-raabbcc-raaabcd-raabbcd-raabcde-rabcdef
@@ -1226,7 +1241,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_0_unique = function(raaaaab, raaaabb, raaabbb, raaaabc, raaabbc, raabbcc, raaabcd, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa = 1-raaaaab-raaaabb-raaabbb-raaaabc-raaabbc-raabbcc-raaabcd-raabbcd-raabcde-rabcdef
@@ -1275,7 +1290,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_1 = function(raaaaab, raaaabc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaaabc-raaabcd-raabcde-rabcdef
@@ -1326,7 +1341,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_1_unique = function(raaaaab, raaaabc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaaabc-raaabcd-raabcde-rabcdef
@@ -1365,7 +1380,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_2 = function(raaaaab, raaaabc, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaaabc-raabbcd-raabcde-rabcdef
@@ -1416,7 +1431,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_2_unique = function(raaaaab, raaaabc, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaaabc-raabbcd-raabcde-rabcdef
@@ -1455,7 +1470,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_3 = function(raaaaab, raaabbc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaabbc-raaabcd-raabcde-rabcdef
@@ -1506,7 +1521,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_3_unique = function(raaaaab, raaabbc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaabbc-raaabcd-raabcde-rabcdef
@@ -1545,7 +1560,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_4 = function(raaaaab, raaabbc, raabccd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaabbc-raabccd-raabcde-rabcdef
@@ -1596,7 +1611,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_4_unique = function(raaaaab, raaabbc, raabccd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaabbc-raabccd-raabcde-rabcdef
@@ -1635,7 +1650,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_5 = function(raaaaab, raaabbc, raabccd, rabcdde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaabbc-raabccd-rabcdde-rabcdef
@@ -1686,7 +1701,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_5_unique = function(raaaaab, raaabbc, raabccd, rabcdde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaaab-raaabbc-raabccd-rabcdde-rabcdef
@@ -1725,7 +1740,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_6 = function(raaaabb, raaaabc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaaabc-raaabcd-raabcde-rabcdef
@@ -1776,7 +1791,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_6_unique = function(raaaabb, raaaabc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaaabc-raaabcd-raabcde-rabcdef
@@ -1815,7 +1830,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_7 = function(raaaabb, raaaabc, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaaabc-raabbcd-raabcde-rabcdef
@@ -1866,7 +1881,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_7_unique = function(raaaabb, raaaabc, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaaabc-raabbcd-raabcde-rabcdef
@@ -1905,7 +1920,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_8 = function(raaaabb, raaabcc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaabcc-raaabcd-raabcde-rabcdef
@@ -1956,7 +1971,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_8_unique = function(raaaabb, raaabcc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaabcc-raaabcd-raabcde-rabcdef
@@ -1995,7 +2010,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_9 = function(raaaabb, raaabcc, raabcdd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaabcc-raabcdd-raabcde-rabcdef
@@ -2046,7 +2061,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_9_unique = function(raaaabb, raaabcc, raabcdd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaabcc-raabcdd-raabcde-rabcdef
@@ -2085,7 +2100,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_10 = function(raaaabb, raaabcc, raabcdd, rabcdee, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaabcc-raabcdd-rabcdee-rabcdef
@@ -2136,7 +2151,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_10_unique = function(raaaabb, raaabcc, raabcdd, rabcdee, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raaabcc-raabcdd-rabcdee-rabcdef
@@ -2175,7 +2190,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_11 = function(raaaabb, raabbcc, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raabbcc-raabbcd-raabcde-rabcdef
@@ -2226,7 +2241,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_11_unique = function(raaaabb, raabbcc, raabbcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raabbcc-raabbcd-raabcde-rabcdef
@@ -2265,7 +2280,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_12 = function(raaaabb, raabbcc, raabcdd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raabbcc-raabcdd-raabcde-rabcdef
@@ -2316,7 +2331,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_12_unique = function(raaaabb, raabbcc, raabcdd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raabbcc-raabcdd-raabcde-rabcdef
@@ -2355,7 +2370,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_13 = function(raaaabb, raabbcc, raabcdd, rabcdee, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raabbcc-raabcdd-rabcdee-rabcdef
@@ -2406,7 +2421,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_13_unique = function(raaaabb, raabbcc, raabcdd, rabcdee, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaaabb-raabbcc-raabcdd-rabcdee-rabcdef
@@ -2445,7 +2460,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_14 = function(raaabbb, raaabbc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaabbb-raaabbc-raaabcd-raabcde-rabcdef
@@ -2496,7 +2511,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_14_unique = function(raaabbb, raaabbc, raaabcd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaabbb-raaabbc-raaabcd-raabcde-rabcdef
@@ -2535,7 +2550,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_15 = function(raaabbb, raaabbc, raabccd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaabbb-raaabbc-raabccd-raabcde-rabcdef
@@ -2586,7 +2601,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_15_unique = function(raaabbb, raaabbc, raabccd, raabcde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaabbb-raaabbc-raabccd-raabcde-rabcdef
@@ -2625,7 +2640,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_16 = function(raaabbb, raaabbc, raabccd, rabcdde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaabbb-raaabbc-raabccd-rabcdde-rabcdef
@@ -2676,7 +2691,7 @@
   #' @param bias A numeric corresponding to the overdispersion of the negative binomial distribution.
   #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
   #' @return A numeric vector of the model estimated y-coordinates of the kmer spectra.
-  #' @export
+  #' @noRd
   predict6_16_unique = function(raaabbb, raaabbc, raabccd, rabcdde, rabcdef, k, d, kmercov, bias, x)
   {
     raaaaaa  = 1-raaabbb-raaabbc-raabccd-rabcdde-rabcdef
@@ -2733,7 +2748,7 @@
   #' @param foldername A character vector corresponding to the name of the output directory.
   #' @param arguments A data frame of the user-specified inputs.
   #' @param IN_VERBOSE A boolean flag to designate whether report_results is being called in a VERBOSE block.
-  #' @export
+  #' @noRd
   
     report_results <- function(kmer_hist,kmer_hist_orig, k, p, container, foldername, arguments, IN_VERBOSE) {
       
@@ -3812,7 +3827,7 @@
   #' including x-values up to the end of kmer_hist_orig, up to (2p+1)*lambda, and up to (p+1)*lambda respectively.
   #' Additionally, the variables "allscore", "fullscore", and "uniquescore" are the
   #' corresponding percentage of kmers that are correctly modeled.
-  #' @export
+  #' @noRd
   # score_model<-function(kmer_hist_orig, nls, round, foldername, transform_exp) {
 
   #     x = kmer_hist_orig[[1]]
@@ -3886,7 +3901,7 @@
   # #' @param estLength A numeric corresponding to the estimated polyploid genome length.
   # #' @param max_iterations An integer corresponding to the maximum number iterations to use for nlsLM.
   # #' @return An nlsLM model object with some additional components.
-  # #' @export
+  # #' @noRd
   # nls_peak<-function(x, y, k, p, top, estKmercov, estLength, max_iterations) {
   #   #Initiate variables
   #   model = NULL
@@ -4024,7 +4039,7 @@
   #' @param arguments A data frame of the user-specified inputs.
   #' @return A list (nls, nlsscore) where nls is the nlsLM model object (with some additional components)
   #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
-  #' @export
+  #' @noRd
     # estimate_Genome_peakp <- function(kmer_hist_orig, x, y, k, p, topology, estKmercov, round, foldername, arguments) {
     #   if (topology==-1) {
     #     p_to_num_topologies = c(1, 1, 1, 2, 5, 16)

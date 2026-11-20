@@ -1,5 +1,18 @@
-## Moved verbatim from phylochemistry.R (phylochemistry website tree).
+## Moved from phylochemistry.R (phylochemistry website tree).
 
+            #' Estimate genome size and heterozygosity from a k-mer histogram (GenomeScope 2.0)
+            #'
+            #' A port of GenomeScope 2.0: fits the k-mer spectrum with a negative-binomial
+            #' mixture model by nonlinear least squares (`minpack.lm::nlsLM()`) and writes
+            #' the summary, model and progress files into `output_dir`.
+            #'
+            #' @param input_histogram_file Path to a two-column k-mer histogram
+            #'   (coverage, count), whitespace separated, no header.
+            #' @param output_dir Output directory (created if needed).
+            #' @param ploidy Ploidy of the model, 1 to 6.
+            #' @param kmer_length k-mer length used to build the histogram.
+            #' @return Called for its side effects (files in `output_dir`).
+            #' @export
             genomeScope <- function( input_histogram_file, output_dir, ploidy, kmer_length ) {
 
                 ## General set up stuff
@@ -68,7 +81,8 @@
                         SCORE_HET_FOLD_DIFFERENCE = 10 ## Overrule heterozygosity if there is a large difference in het rate
                     
                     ## Suppress the warnings if the modeling goes crazy, those are in try/catch blocks anyways
-                        options(warn = -1)
+                        old_warn <- options(warn = -1)
+                        on.exit(options(old_warn), add = TRUE)
 
                     ## Colors for plots
                         COLOR_BGCOLOR  = "light grey"
