@@ -126,6 +126,6 @@ Suggests:
     testthat (>= 3.0.0),
     withr,
     callr
-biocViews:
+biocViews: Software
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
