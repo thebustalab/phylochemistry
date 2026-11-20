@@ -46,6 +46,19 @@ local({
                 ), call. = FALSE)
             }
 
+            ## 1b. A fresh install needs R >= 4.5: a current dependency (Deriv, under
+            ##     rstatix) requires it. Machines that already have Deriv (e.g. host1
+            ##     on R 4.3) are fine, so only a machine lacking it is stopped.
+            if (getRversion() < "4.5.0" &&
+                !nzchar(system.file(package = "Deriv"))) {
+                stop(paste0(
+                    "\n\n[phylochemistry] Your R is version ", getRversion(),
+                    ", but installing phylochemistry for the first time needs R 4.5 or newer.\n",
+                    "  -> Install the latest R from https://cloud.r-project.org\n",
+                    "  -> Then FULLY quit and reopen RStudio so it uses the new R, and source phylochemistry again.\n"
+                ), call. = FALSE)
+            }
+
             ## 2. A writable package library must exist on the path
             libs <- .libPaths()
             if (!any(file.access(libs, mode = 2) == 0)) {
