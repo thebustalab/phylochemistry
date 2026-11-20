@@ -139,7 +139,7 @@ local({
         ## (cowplot::plot_grid, ggrepel, ape::read.tree, ... with no library() call).
         lab_cran   <- c("minpack.lm", "XML", "DT", "rhandsontable")
         core_cran  <- c("tidyverse", "dplyr", "stringr", "data.table", "jsonlite", "progress",
-                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", "viridis", "RColorBrewer",
+                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", "ggpmisc", "viridis", "RColorBrewer",
                         "ggnewscale", "patchwork", "gridExtra", "grid", "rstatix", "multcompView",
                         "performance", "Hmisc", "FactoMineR", "ape", "ips", "fpc", "Rtsne", "umap",
                         "shipunov", "Rfast", "recipes", "rsample", "workflows", "tune", "yardstick",
