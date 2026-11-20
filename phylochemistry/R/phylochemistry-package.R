@@ -24,7 +24,7 @@
 #' @importFrom grDevices col2rgb dev.off png rgb
 #' @importFrom httr content content_type_json GET POST timeout
 #' @importFrom magrittr %>% set_colnames
-#' @importFrom parsnip rand_forest set_args set_engine set_mode
+#' @importFrom parsnip fit rand_forest set_args set_engine set_mode
 #' @importFrom phangorn parsimony phyDat
 #' @importFrom phytools fastAnc
 #' @importFrom readr cols read_csv write_csv

@@ -112,7 +112,8 @@ Suggests:
     rtracklayer,
     Rsamtools,
     testthat (>= 3.0.0),
-    withr
+    withr,
+    callr
 biocViews:
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
