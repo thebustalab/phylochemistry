@@ -3,16 +3,14 @@
 
         #### rotate_coord
 
+
             #' rotates a set of x,y coordinates
             #'
             #' @param x The x values
             #' @param y The y values
             #' @param angle The angle to rotate (in degrees)
             #' @param center The center of rotation (default = 0,0)
-            #' @examples
             #' @export
-            #' rotate_coord
-
             rotate_coord <- function( x, y, angle, center = c(0,0) ){
   
                 x <- x - center[1]
@@ -32,6 +30,12 @@
 
         #### coord_radar
 
+            #' Radar (spider) coordinate system for ggplot2
+            #'
+            #' @param theta Not yet documented.
+            #' @param start Not yet documented.
+            #' @param direction Not yet documented.
+            #' @export
             coord_radar <- function (theta = "x", start = 0, direction = 1) 
                 {
                     theta <- match.arg(theta, c("x", "y"))
@@ -48,15 +52,17 @@
         
         #### -.gg
 
+
             #' Insert a geom layer below others
             #'
             #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
             #' @param plot The plot to which the layer should be added
             #' @param layer The layer to be added
-            #' @export
             #' @examples
+            #' \dontrun{
             #' -.gg()
-
+            #' }
+            #' @export
             `-.gg` <- function(plot, layer) {
                 if (missing(layer)) {
                     stop("Cannot use `-.gg()` with a single argument. Did you accidentally put - on a new line?")
@@ -71,14 +77,14 @@
 
         #### generateTicks
 
+
             #' Create major and minor axes ticks and labels
             #'
             #' @param major_ticks Values at which major ticks should be generated
-            #' @param minor_freq Number of minor ticks between each major tick 
-            #' @examples
+            #' @param minor_freq Number of minor ticks between each major tick
+            #' @param major_tick_size Not yet documented.
+            #' @param minor_tick_size Not yet documented.
             #' @export
-            #' generateTicks
-
             generateTicks <-    function(
                                     major_ticks,
                                     minor_freq = 4,
@@ -117,14 +123,20 @@
 
         #### drawMolecules
 
+
             #' Draw chemical structures from CSV
             #'
             #' @param csv_in_path Path to the csv with the molecular coordinates.
             #' @param data Data that the functions should plot.
-            #' @export
+            #' @param atom_color_column Not yet documented.
+            #' @param bond_color_column Not yet documented.
+            #' @param molecule_name Not yet documented.
+            #' @param atom_numbers Not yet documented.
             #' @examples
+            #' \dontrun{
             #' drawMolecules()
-
+            #' }
+            #' @export
             drawMolecules <-    function(
                                     csv_in_path = NULL, 
                                     data = NULL, 
@@ -454,13 +466,17 @@
 
         #### vennAnalysis
 
+
             #' Get coordinates for quantitative Venn Diagram
             #'
             #' @param data Data frame of TRUE FALSE for whether each observation belongs to each category
             #' @examples
+            #' \dontrun{
             #' vennAnalysis()
-
+            #' }
+            #' @export
             vennAnalysis <- function(data) {
+                rlang::check_installed(c("eulerr"), reason = "to use vennAnalysis()")
                 # str(plot(euler(data, shape = "circle"), quantities = TRUE))
                 # plot(euler(data, shape = "circle"), quantities = TRUE)$data$centers
                 venn_output <- eulerr::euler(data, shape = "circle")
@@ -489,6 +505,7 @@
 
         #### points3D
 
+
             #' Get coordinates for a 3D scatter plot
             #'
             #' @param data Data frame with columns x, y, z, and sample_unique_ID
@@ -498,9 +515,12 @@
             #' @param y_tick_interval Interval of ticks on y axis
             #' @param z_tick_interval Interval of ticks on z axis
             #' @examples
+            #' \dontrun{
             #' points3D()
-
+            #' }
+            #' @export
             points3D <- function( data, angle, tick_round, x_tick_interval, y_tick_interval, z_tick_interval ) {
+                rlang::check_installed(c("plyr"), reason = "to use points3D()")
 
                 ## Initial calculations
 

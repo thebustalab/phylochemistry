@@ -24,6 +24,9 @@
     }
 
 
+    #' Pick a free port for a Shiny app on the lab JupyterHub
+    #'
+    #' @export
     pick_shiny_port <- function() {
         for (i in sample(nrow(.shiny_port_pool))) {
             p <- .shiny_port_pool$port[i]

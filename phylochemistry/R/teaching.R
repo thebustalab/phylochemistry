@@ -3,8 +3,15 @@
 
         #### question
 
-            #' Create a question
 
+            #' Create a question
+            #' @param question Not yet documented.
+            #' @param distractors Not yet documented.
+            #' @param correct Not yet documented.
+            #' @param no Not yet documented.
+            #' @param fb Not yet documented.
+            #' @param print_question Not yet documented.
+            #' @export
             question <- function(question, distractors, correct, no, fb = "", print_question = TRUE){
                 allanswers <- c(distractors, correct)[sample.int(length(distractors)+1)]
                 correctanswer <- which(allanswers == correct)
@@ -52,6 +59,12 @@
 
         #### questionnaire
 
+            #' Build a questionnaire from a table of questions
+            #'
+            #' @param x Not yet documented.
+            #' @param shuffle Not yet documented.
+            #' @param print_question Not yet documented.
+            #' @export
             questionnaire <- function(x, shuffle = TRUE, print_question = TRUE){
                 
                 if(inherits(x, "character")) x <- read.csv(x, stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM")
@@ -91,6 +104,10 @@
 
         #### buildCaption
 
+            #' Interactive figure-caption builder app
+            #'
+            #' @param jupyter Not yet documented.
+            #' @export
             buildCaption <- function(jupyter = FALSE) {
 
                 ui <- fluidPage(

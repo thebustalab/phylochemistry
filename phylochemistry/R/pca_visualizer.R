@@ -1,6 +1,12 @@
 ## pcaVisualizer — moved verbatim from modules/pca_visualizer.R (library() lines dropped)
 
 # Launch with pcaVisualizerApp(data_frame)
+#' Interactive PCA visualizer
+#'
+#' @param data Not yet documented.
+#' @param columns_w_sample_ID_info Not yet documented.
+#' @param columns_w_values_for_single_analyte Not yet documented.
+#' @export
 pcaVisualizer <- function(data,
                              columns_w_sample_ID_info = NULL,
                              columns_w_values_for_single_analyte = NULL) {

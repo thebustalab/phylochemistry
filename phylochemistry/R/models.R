@@ -5,6 +5,19 @@
 
             # Was buildModel2 until 2026-10-30 (Lucas): the older buildModel it replaced had no callers and was
             # removed. buildModel2 stays as an alias below so existing code keeps running.
+            #' Build a statistical or machine-learning model
+            #'
+            #' @param data Not yet documented.
+            #' @param model_type Not yet documented.
+            #' @param predictors Not yet documented.
+            #' @param response Not yet documented.
+            #' @param fold_cross_validation Not yet documented.
+            #' @param optimization_parameters Not yet documented.
+            #' @param formula Not yet documented.
+            #' @param scale_variance Not yet documented.
+            #' @param input_variables Not yet documented.
+            #' @param output_variable Not yet documented.
+            #' @export
             buildModel <- function(
                 data,
                 model_type = c(
@@ -357,11 +370,22 @@
 
         #### buildModel2 (alias, kept for back-compatibility)
 
+            #' Former name of buildModel()
+            #'
+            #' @param ... Not yet documented.
+            #' @export
             buildModel2 <- function(...) buildModel(...)
 
 
         #### predictWithModel
 
+            #' Predict new values with a model from buildModel()
+            #'
+            #' @param data Not yet documented.
+            #' @param model Not yet documented.
+            #' @param model_type Not yet documented.
+            #' @param id_cols Not yet documented.
+            #' @export
             predictWithModel <- function(
                 data,
                 model,

@@ -5,6 +5,10 @@
     ## Set up lookups
 
         ## Phred_ascii_33 lookup
+            #' Phred+33 quality score lookup table
+            #'
+            #' @format A data frame mapping Phred+33 characters to quality scores.
+            #' @export
             phred33_lookup <- data.frame(rbind(
                 c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89"),c("{","90"),c("|","91"),c("}","92"),c("~","93")
             ))
@@ -12,13 +16,12 @@
 
         #### readAlignment
 
+
             #' Reads an alignment into a tidy dataframe
             #'
             #' @param alignment_in_path The path to the alignment
-            #' @examples
+            #' @param type Not yet documented.
             #' @export
-            #' readAlignment
-
             readAlignment <- function( alignment_in_path, type = c("DNA", "AA")) {
 
                 ## DNA v AA
@@ -66,14 +69,17 @@
             #' @return None. The function writes the alignment to a specified FASTA file.
             #' @examples
             #' \dontrun{
+            #' \dontrun{
             #' # Write a DNA alignment to a FASTA file
             #' writeAlignment(alignment_df, "output.fasta", type = "DNA")
             #'
             #' # Automatically detect the type and write to a FASTA file
             #' writeAlignment(alignment_df, "output.fasta")
             #' }
+            #' }
             #' @export
             writeAlignment <- function(alignment, alignment_out_path, type = "auto") {
+                .check_bioc(c("Biostrings"), "writeAlignment")
                 
                 # Input validation
                 if (!all(c("name", "position", "state") %in% colnames(alignment))) {
@@ -112,9 +118,9 @@
 
                 # Convert to appropriate StringSet type
                 if (type == "DNA") {
-                    sequences <- DNAStringSet(sequences)
+                    sequences <- Biostrings::DNAStringSet(sequences)
                 } else if (type == "AA") {
-                    sequences <- AAStringSet(sequences)
+                    sequences <- Biostrings::AAStringSet(sequences)
                 }
 
                 # Write to file
@@ -124,15 +130,13 @@
 
         #### downloadFasta
 
+
             #' Returns contents of one fasta file as a StringSet object.
             #'
             #' @param share_link The path to the fasta to read. Can be local or a google drive share link.
-            #' @importFrom Biostrings readBStringSet readDNAStringSet readRNAStringSet readAAStringSet
-            #' @examples
             #' @export
-            #' downloadFasta
-
             downloadFasta <- function(share_link) {
+                rlang::check_installed(c("googledrive"), reason = "to use downloadFasta()")
                 cat("Downloading... this may take a while...")
                 suppressMessages(googledrive::drive_download(
                     file = googledrive::as_id(share_link),
@@ -144,16 +148,14 @@
 
         #### readFasta
 
-        	#' Returns contents of one fasta file as a StringSet object.
+
+            #' Returns contents of one fasta file as a StringSet object.
             #'
             #' @param fasta_in_path The path to the fasta to read. Can be local or a google drive share link.
             #' @param fasta_type The type of sequence data contained in the fasta file. Options: "nonspecific", "DNA", "RNA", or "AA"
-            #' @importFrom Biostrings readBStringSet readDNAStringSet readRNAStringSet readAAStringSet
-            #' @examples
             #' @export
-            #' readFasta
-
             readFasta <- function( fasta_in_path, fasta_type = "nonspecific" ) {
+                .check_bioc(c("Biostrings"), "readFasta")
 
                 ## If its on google drive, download it and make a temp file
                     if (length(grep("http", fasta_in_path)) > 0) {
@@ -189,31 +191,29 @@
 
         #### readManyFastas
 
-        	#' Returns the contents of many fasta files as a StringSet object.
+
+            #' Returns the contents of many fasta files as a StringSet object.
             #'
             #' @param fasta_in_paths The paths to the fastas to read
             #' @param fasta_type The type of sequence data contained in the fasta file. Options: "nonspecific", "DNA", "RNA", or "AA"
-            #' @importFrom Biostrings readBStringSet readDNAStringSet readRNAStringSet readAAStringSet
-            #' @examples
             #' @export
-            #' readManyFastas
-
             readManyFastas <- function( fasta_in_paths, fasta_type = "nonspecific" ) {
+                .check_bioc(c("Biostrings"), "readManyFastas")
 
         		if ( fasta_type == "nonspecific" ) {
-            		temp <- BStringSet()
+            		temp <- Biostrings::BStringSet()
             	}
 
             	if ( fasta_type == "DNA" ) {
-            		temp <- DNAStringSet()
+            		temp <- Biostrings::DNAStringSet()
             	}
 
             	if ( fasta_type == "RNA" ) {
-            		temp <- RNAStringSet()
+            		temp <- Biostrings::RNAStringSet()
             	}
 
             	if ( fasta_type == "AA" ) {
-            		temp <- AAStringSet()
+            		temp <- Biostrings::AAStringSet()
             	}
 
             	for ( fasta in 1:length(fasta_in_paths) ) {
@@ -243,16 +243,14 @@
 
         #### writeManyFastas
 
-        	#' Writes one or more sequences as individual fasta file(s), each with one sequence
+
+            #' Writes one or more sequences as individual fasta file(s), each with one sequence
             #'
             #' @param XStringSet The sequence(s) to write out
             #' @param fasta_out_directory_path The path to the directory where the file(s) should be written
-            #' @importFrom Biostrings writeXStringSet
-            #' @examples
             #' @export
-            #' writeManyFastas
-
             writeManyFastas <- function( XStringSet, fasta_out_directory_path ) {
+                .check_bioc(c("Biostrings"), "writeManyFastas")
             	for (sequence in 1:length(XStringSet)) {
             		Biostrings::writeXStringSet( x = XStringSet[sequence], filepath = paste0(fasta_out_directory_path, XStringSet@ranges@NAMES[sequence], ".fa") )
             	}
@@ -261,19 +259,19 @@
 
         #### writeFasta
 
-        	#' Writes one or more sequences as a single fasta file
+
+            #' Writes one or more sequences as a single fasta file
             #'
             #' @param XStringSet The sequences to write out
             #' @param fasta_out_path The path to where the file should be written
-            #' @importFrom Biostrings writeXStringSet
-            #' @examples
+            #' @param append Not yet documented.
+            #' @param fasta_type Not yet documented.
             #' @export
-            #' writeFasta
-
             writeFasta <- function( XStringSet, fasta_out_path, append = FALSE, fasta_type = c("DNA", "AA")) {
+                .check_bioc(c("Biostrings"), "writeFasta")
 
                 if (fasta_type[1] == "DNA") {
-            	   Biostrings::writeXStringSet( x = DNAStringSet(XStringSet), filepath = fasta_out_path, append = append )
+            	   Biostrings::writeXStringSet( x = Biostrings::DNAStringSet(XStringSet), filepath = fasta_out_path, append = append )
                 }
 
                 if (fasta_type[1] == "AA") {
@@ -285,22 +283,21 @@
 
         #### gblocks
 
+
             #' Subset an alignment
             #'
             #' @param alignment_in_path The path to the information that should be used to build the tree.
             #' @param max_gap_percent The maximum percentage of gaps allowed in a column of the alignment. Default is 0.5.
             #' @param min_conservation_percent The minimum percentage of conservation allowed in a column of the alignment. Default is 0.3.
             #' @param sequence_type The type of sequence in the alignment, either "DNA" or "AA"
-            #' @examples
             #' @export
-            #' gblocks
-
             gblocks <- function(
                 alignment_in_path = NULL,
                 max_gap_percent = 0.5,
                 min_conservation_percent = 0.3,
                 sequence_type = c("DNA", "AA")
             ) {
+                .check_bioc(c("Biostrings"), "gblocks")
 
                 ## Read in the alignment and make it a matrix
                     if (sequence_type == "DNA") {
@@ -358,17 +355,17 @@
 
                 ## Write out as fasta
                     if (sequence_type == "DNA") {
-                        blocked_alignment <- DNAStringSet()
+                        blocked_alignment <- Biostrings::DNAStringSet()
                         for (i in 1:dim(nucl_seqs_aligned_matrix)[1]) {
-                            blocked_alignment <- c(blocked_alignment, DNAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
+                            blocked_alignment <- c(blocked_alignment, Biostrings::DNAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
                         }
                         blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
                         writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
                     }
                     if (sequence_type == "AA") {
-                        blocked_alignment <- AAStringSet()
+                        blocked_alignment <- Biostrings::AAStringSet()
                         for (i in 1:dim(nucl_seqs_aligned_matrix)[1]) {
-                            blocked_alignment <- c(blocked_alignment, AAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
+                            blocked_alignment <- c(blocked_alignment, Biostrings::AAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
                         }
                         blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
                         writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
@@ -392,6 +389,12 @@
 
         #### annotateAminoAcidSequence    
 
+            #' Annotate an amino acid sequence with InterProScan
+            #'
+            #' @param sequence Not yet documented.
+            #' @param email Not yet documented.
+            #' @param applications Not yet documented.
+            #' @export
             annotateAminoAcidSequence <- function(sequence, email, applications = "PfamA") {
               base <- "https://www.ebi.ac.uk/Tools/services/rest/iprscan5"
               
@@ -422,6 +425,12 @@
 
         #### blastNCBI
 
+            #' Run a BLAST search at NCBI
+            #'
+            #' @param query_sequence Not yet documented.
+            #' @param program Not yet documented.
+            #' @param database Not yet documented.
+            #' @export
             blastNCBI <- function(query_sequence, program, database) {
 
                 # Reference: https://blast.ncbi.nlm.nih.gov/doc/blast-help/urlapi.html#urlapi
@@ -525,30 +534,32 @@
 
         #### buildDomainLibrary
 
+
             #' Build a Hidden Markov Model (HMM) database from a set of sequence alignments
             #'
-            #' This function takes a list of sequence alignment files and constructs a HMM database. 
-            #' It uses the HMMER suite to build individual HMMs from each alignment and then combines them 
+            #' This function takes a list of sequence alignment files and constructs a HMM database.
+            #' It uses the HMMER suite to build individual HMMs from each alignment and then combines them
             #' into a single HMM database file. The resulting database is then indexed for efficient searching.
             #'
-            #' @param alignment_in_paths A character vector containing the file paths to the sequence alignment files. 
+            #' @param alignment_in_paths A character vector containing the file paths to the sequence alignment files.
             #'        Each file should be in a format compatible with the HMMER 'hmmbuild' tool.
-            #' @param domain_library_out_path A character string specifying the file path where the resulting HMM database 
+            #' @param domain_library_out_path A character string specifying the file path where the resulting HMM database
             #'        will be saved. This file will contain all the HMMs built from the input alignments.
             #' @return This function does not return a value. It creates and indexes an HMM database file at the specified path.
-            #' @details The function first removes any existing files at the output path to prevent appending to old data. 
-            #'          It then iterates over each alignment file, builds a temporary HMM file using 'hmmbuild', and appends 
-            #'          it to the output database file. After processing all alignments, the temporary file is deleted, and 
+            #' @details The function first removes any existing files at the output path to prevent appending to old data.
+            #'          It then iterates over each alignment file, builds a temporary HMM file using 'hmmbuild', and appends
+            #'          it to the output database file. After processing all alignments, the temporary file is deleted, and
             #'          the 'hmmpress' command is used to index the database for faster access during searches.
             #' @examples
+            #' \dontrun{
             #' \dontrun{
             #' buildDomainLibrary(
             #'     alignment_in_paths = c("alignment1.sto", "alignment2.sto"),
             #'     domain_library_out_path = "output_hmm_database.hmm"
             #' )
             #' }
+            #' }
             #' @export
-
             buildDomainLibrary <- function(
                 alignment_in_paths,
                 domain_library_out_path
@@ -596,10 +607,12 @@
             #'          to the resulting data frame.
             #' @examples
             #' \dontrun{
+            #' \dontrun{
             #' predictDomains(
             #'     fasta_in_path = "example_sequences.fasta",
             #'     domain_library_in_path = "custom_domain_library.hmm"
             #' )
+            #' }
             #' }
             #' @export
             predictDomains <- function(
@@ -693,12 +706,15 @@
             #' @param hmm_in_path The path to the HMM file containing the domain model.
             #' @param domain_name The name of the domain to fetch from the HMM file for alignment.
             #' @return An AAStringSet object containing the aligned sequences.
-            #' @importFrom Biostrings AAStringSet
             #' @examples
+            #' \dontrun{
             #' # Example usage:
             #' # aligned_sequences <- hmmAlign("sequences.fasta", "domains.hmm", "domain_name")
             #' # print(aligned_sequences)
+            #' }
+            #' @export
             hmmAlign <- function(fasta_in_path, hmm_in_path, domain_name) {
+                .check_bioc(c("Biostrings"), "hmmAlign")
     
                 # Fetch HMM and perform alignment
                     hmm_file <- tempfile()
@@ -722,7 +738,7 @@
                     cropped_sequences <- sapply(sequences_per_header, function(seq) {
                         paste0(strsplit(seq, "")[[1]][positions_to_keep], collapse = "")
                     })
-                    sequences <- AAStringSet(cropped_sequences)
+                    sequences <- Biostrings::AAStringSet(cropped_sequences)
                     names(sequences) <- names(cropped_sequences)
                     return(sequences)
             }
@@ -730,9 +746,10 @@
 
         #### extractORFs
 
+
             #' Extract open reading frames (ORFs) from multifasta files
             #'
-            #' This function identifies and extracts open reading frames (ORFs) from sequences in a multifasta file. 
+            #' This function identifies and extracts open reading frames (ORFs) from sequences in a multifasta file.
             #' It can optionally write the ORFs to a new fasta file and overwrite the input file with the ORF file.
             #' The function can also search for alternative ORFs in the complementary, reverse, and reverse-complementary sequences.
             #' Note: Searching for ORFs in the reverse direction leads to issues during codon alignment...
@@ -742,22 +759,22 @@
             #' @param overwrite Logical. If TRUE, optionally overwrites the input file with the ORF file.
             #' @param alternative_ORFs Logical. If TRUE, searches for alternative ORFs in the complementary, reverse, and reverse-complementary sequences.
             #' @return A data frame containing the accession, start codon position, stop codon position, direction, and length of each ORF.
-            #' @importFrom seqinr read.fasta translate
-            #' @importFrom Biostrings DNAStringSet writeXStringSet
             #' @examples
+            #' \dontrun{
             #' # Example usage:
             #' # Extract ORFs from a multifasta file and write them to a new file
             #' # orfs <- extractORFs("sequences.fasta", write_out_ORFs = TRUE, overwrite = FALSE, alternative_ORFs = TRUE)
             #' # print(orfs)
+            #' }
             #' @export
-            #' extractORFs
-
             extractORFs <- function(
                 file_in_path,
                 write_out_ORFs = FALSE,
                 overwrite = FALSE,
                 alternative_ORFs = FALSE
             ) {
+                .check_bioc(c("Biostrings"), "extractORFs")
+                rlang::check_installed(c("seqinr"), reason = "to use extractORFs()")
 
                 fasta <- seqinr::read.fasta(file_in_path)
                 ORFs <- list()
@@ -1046,6 +1063,7 @@
 
         #### polyBlast
 
+
             #' BLAST search local sequence collections
             #'
             #' Search locally stored sequence collections for query sequences. Download Blast+ here: https://www.ncbi.nlm.nih.gov/books/NBK279671/
@@ -1061,6 +1079,7 @@
             #' @return A data frame (monolist) containing the BLAST search results with columns for accession, Genus, species, annotation, length, longestORF, length_aligned_with_query, percent_identity, e_value, bitscore, subset_all, word_size, query, query_length, and query_longestORF.
             #' @details This function performs a BLAST search on a set of query sequences against a list of subject transcriptomes. It supports both nucleotide and protein BLAST searches, and can handle both Unix and Windows operating systems. The function first translates the transcriptomes if necessary, builds BLAST databases, and then performs the BLAST search. The results are processed to remove duplicates and are written to a monolist, which is also saved to a specified output path.
             #' @examples
+            #' \dontrun{
             #' named_subjects_list <- list("species1" = "path/to/species1.fasta", "species2" = "path/to/species2.fasta")
             #' query_in_path <- "path/to/query.fasta"
             #' sequences_of_interest_directory_path <- "path/to/output/directory"
@@ -1071,9 +1090,8 @@
             #' queries_in_output <- TRUE
             #' monolist_out_path <- "path/to/monolist_output"
             #' polyBlast(named_subjects_list, query_in_path, sequences_of_interest_directory_path, blast_module_directory_path, blast_mode, e_value_cutoff, word_size, queries_in_output, monolist_out_path)
+            #' }
             #' @export
-            #' polyBlast
-
             polyBlast <- function(
                                     named_subjects_list,
                                     query_in_path,
@@ -1085,6 +1103,8 @@
                                     queries_in_output = TRUE,
                                     monolist_out_path
                                 ) {
+                .check_bioc(c("Biostrings"), "polyBlast")
+                rlang::check_installed(c("seqinr"), reason = "to use polyBlast()")
 
                 ### Make sure transcriptomes object is character and has names
                     transcriptomes <- named_subjects_list
@@ -1102,7 +1122,7 @@
                         cat("Translating transcriptomes...\n\n")
                         for ( transcriptome in 1:length(transcriptomes) ) {
                             writeFasta(
-                                XStringSet = translate(readDNAStringSet(transcriptomes[transcriptome]), if.fuzzy.codon = "solve"),
+                                XStringSet = Biostrings::translate(Biostrings::readDNAStringSet(transcriptomes[transcriptome]), if.fuzzy.codon = "solve"),
                                 fasta_out_path = paste(transcriptomes[transcriptome], "trans", sep = "_"),
                                 type = "AA"
                             )
@@ -1648,8 +1668,8 @@
             #' @param mode A character string specifying the alignment mode. Options are "nucl_align" for nucleotide alignment, "amin_align" for amino acid alignment, "codon_align" for codon alignment, or "fragment_align" for fragment alignment.
             #' @param base_fragment A character string specifying the base fragment for fragment alignment. Default is NULL.
             #' @return This function does not return a value. It writes the aligned sequences to the specified output path.
-            #' @import msa
             #' @examples
+            #' \dontrun{
             #' # Example usage:
             #' # Align nucleotide sequences
             #' alignSequences(
@@ -1660,6 +1680,7 @@
             #'     input_sequence_type = "nucl",
             #'     mode = "nucl_align"
             #' )
+            #' }
             #' @export
             alignSequences <-   function(
                         monolist, 
@@ -1670,6 +1691,8 @@
                         mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
                         base_fragment = NULL
                     ){  
+                .check_bioc(c("Biostrings", "msa"), "alignSequences")
+                rlang::check_installed(c("seqinr"), reason = "to use alignSequences()")
 
                 ## Check directory_paths, Get appropriate subset of the monolist
                     sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
@@ -1854,6 +1877,7 @@
 
         #### analyzeAlignment
         
+
             #' Analyze a multiple sequence alignment and subset it for phylogeny building
             #'
             #' This function reads a multiple sequence alignment, analyzes the composition of each position, and subsets the alignment based on user-defined thresholds for gap percentage and conservation percentage. It also provides a user interface for visualizing the alignment and the resulting phylogenetic trees.
@@ -1863,16 +1887,17 @@
             #' @param jupyter Logical. If TRUE, the function will run in a Jupyter notebook environment.
             #' @return A Shiny app for visualizing and subsetting the alignment.
             #' @examples
+            #' \dontrun{
             #' # Example usage:
             #' # analyzeAlignment("path/to/alignment.fasta", type = "DNA", jupyter = FALSE)
+            #' }
             #' @export
-            #' analyzeAlignment
-
             analyzeAlignment <- function(
                 alignment_in_path,
                 type = c("DNA", "AA"),
                 jupyter = FALSE
             ) {
+                .check_bioc(c("Biostrings"), "analyzeAlignment")
 
                 ## Prelim stuff
 
@@ -2018,11 +2043,11 @@
 
                         # Build the trimmed alignment based on type
                         if (type == "DNA") {
-                            trimmed_alignment <- DNAStringSet()
+                            trimmed_alignment <- Biostrings::DNAStringSet()
                             for (i in 1:nrow(alignment_wide)) {
                                 seq_chars <- alignment_wide[i, 2:ncol(alignment_wide)]
                                 trimmed_seq <- paste0(as.character(seq_chars), collapse = "")
-                                trimmed_alignment <- c(trimmed_alignment, DNAStringSet(trimmed_seq))
+                                trimmed_alignment <- c(trimmed_alignment, Biostrings::DNAStringSet(trimmed_seq))
                             }
                             # Convert factor to character before assigning names
                             trimmed_alignment@ranges@NAMES <- as.character(alignment_wide[[1]])
@@ -2030,11 +2055,11 @@
                         }
 
                         if (type == "AA") {
-                            trimmed_alignment <- AAStringSet()
+                            trimmed_alignment <- Biostrings::AAStringSet()
                             for (i in 1:nrow(alignment_wide)) {
                                 seq_chars <- alignment_wide[i, 2:ncol(alignment_wide)]
                                 trimmed_seq <- paste0(as.character(seq_chars), collapse = "")
-                                trimmed_alignment <- c(trimmed_alignment, AAStringSet(trimmed_seq))
+                                trimmed_alignment <- c(trimmed_alignment, Biostrings::AAStringSet(trimmed_seq))
                             }
                             # Convert factor to character before assigning names
                             trimmed_alignment@ranges@NAMES <- as.character(alignment_wide[[1]])
@@ -2158,36 +2183,36 @@
 
         #### readGFFs
 
-            #' readGFFs
-            #'
-            #' Read multiple genome feature files into a tidy dataframe
-            #'
-            #' This function reads multiple genome feature files (GFFs) and processes them into a tidy dataframe. It allows for various modes of subsetting and concatenation of GFFs based on user-defined parameters.
-            #'
-            #' @param input_frame A dataframe with columns: Genus_species, GFF_in_path, region_reach (20000), concatenation_spacing (10000)
-            #' @param subset_mode A character vector of length 1. One of: "none", "goi_only", "goi_region", "name_check"
-            #' @param goi A character vector of gene names. Labelling by species is not necessary
-            #' @param concatenate_by_species A logical. If TRUE, concatenate all GFFs for a species into a single GFF
-            #' @param chromosomes_only A logical. If TRUE, only keep chromosome features
-            #' @param omit A character vector of columns to omit from the output dataframe
-            #' @return A tidy dataframe containing the processed GFF data
-            #' @examples
-            #' # Example usage:
-            #' # Read GFFs without any subsetting
-            #' gff_data <- readGFFs(input_frame, subset_mode = "none")
-            #' 
-            #' # Read GFFs and subset by genes of interest (goi)
-            #' gff_data <- readGFFs(input_frame, subset_mode = "goi_only", goi = c("gene1", "gene2"))
-            #' 
-            #' # Read GFFs and subset by regions around genes of interest (goi)
-            #' gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"), region_reach = 20000)
-            #' 
-            #' # Read GFFs and check for unique gene names
-            #' gff_data <- readGFFs(input_frame, subset_mode = "name_check")
-            #' 
-            #' @export
-            #' readGFFs
 
+                #' readGFFs
+                #'
+                #' Read multiple genome feature files into a tidy dataframe
+                #'
+                #' This function reads multiple genome feature files (GFFs) and processes them into a tidy dataframe. It allows for various modes of subsetting and concatenation of GFFs based on user-defined parameters.
+                #'
+                #' @param input_frame A dataframe with columns: Genus_species, GFF_in_path, region_reach (20000), concatenation_spacing (10000)
+                #' @param subset_mode A character vector of length 1. One of: "none", "goi_only", "goi_region", "name_check"
+                #' @param goi A character vector of gene names. Labelling by species is not necessary
+                #' @param concatenate_by_species A logical. If TRUE, concatenate all GFFs for a species into a single GFF
+                #' @param chromosomes_only A logical. If TRUE, only keep chromosome features
+                #' @param omit A character vector of columns to omit from the output dataframe
+                #' @return A tidy dataframe containing the processed GFF data
+                #' @examples
+                #' \dontrun{
+                #' # Example usage:
+                #' # Read GFFs without any subsetting
+                #' gff_data <- readGFFs(input_frame, subset_mode = "none")
+                #'
+                #' # Read GFFs and subset by genes of interest (goi)
+                #' gff_data <- readGFFs(input_frame, subset_mode = "goi_only", goi = c("gene1", "gene2"))
+                #'
+                #' # Read GFFs and subset by regions around genes of interest (goi)
+                #' gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"), region_reach = 20000)
+                #'
+                #' # Read GFFs and check for unique gene names
+                #' gff_data <- readGFFs(input_frame, subset_mode = "name_check")
+                #' }
+                #' @export
                 readGFFs <- function(
                                 input_frame, # Dataframe with columns
                                 subset_mode = c("none", "goi_only", "goi_region", "name_check"), 
@@ -2196,6 +2221,8 @@
                                 chromosomes_only = FALSE,
                                 omit = NULL
                             ) {
+                    .check_bioc(c("rtracklayer", "GenomicRanges"), "readGFFs")
+                    rlang::check_installed(c("plyr"), reason = "to use readGFFs()")
 
                     framed_GFFs <- list()
 
@@ -2384,14 +2411,15 @@
 
         #### fastxQC
 
+
             #' Run QC on fastx file(s)
             #'
             #' @param paths_to_fastxs A list of the paths to the fastx file(s) you want to analyze
             #' @param max_n_seqs The maximum number of sequences PER FILE to analyze. Default is no limit.
-            #' @examples
+            #' @param type Not yet documented.
+            #' @param mode Not yet documented.
+            #' @param progress Not yet documented.
             #' @export
-            #' fastxQC
-
             fastxQC <-  function(
                             paths_to_fastxs,
                             type = c("fastq", "fasta"),
@@ -2526,15 +2554,18 @@
             #' @param organism A character string specifying the organism whose codon table should be used for reverse translation. Options are "Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", or "Saccharomyces_cerevisiae". The default is to use the codon table for "Arabidopsis_thaliana".
             #' @return This function does not return a value. It writes the reverse-translated nucleotide sequences to the specified output fasta file.
             #' @details The function reads a codon table from a predefined URL and filters it based on the specified organism. It then constructs a substitution table to map amino acids to their most frequently used codons in the organism. Each protein sequence in the input file is reverse translated, ensuring a terminal stop codon is present, and the resulting nucleotide sequences are saved to the output file.
-            #' @examples 
+            #' @examples
+            #' \dontrun{
             #' # Reverse translate a protein sequence for Arabidopsis thaliana
             #' reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta", "peptide.fasta", "Arabidopsis_thaliana")
-            #' @export reverseTranslate
+            #' }
+            #' @export
             reverseTranslate <- function(
                 fasta_in_path,
                 fasta_out_path,
                 organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")
             ) {
+                .check_bioc(c("Biostrings"), "reverseTranslate")
 
                 # Read the codon table for the specified organism
                 codon_tables <- readMonolist("https://thebustalab.github.io/phylochemistry/sample_data/codon_tables.csv")
@@ -2573,33 +2604,38 @@
 
         #### fastqToFasta
 
+
             #' Convert fastq to fasta
             #'
             #' @param file_in_path The path to the fastq file
             #' @param file_out_path The path to the fasta file to write
-            #' @examples fastqToFasta("https://thebustalab.github.io/R_For_Chemists/sample_data/reads.fastq", "reads.fasta")
-            #' @export fastqToFasta
-            #' fastqToFasta
-
+            #' @examples
+            #' \dontrun{
+            #' fastqToFasta("https://thebustalab.github.io/R_For_Chemists/sample_data/reads.fastq", "reads.fasta")
+            #' }
+            #' @export
             fastqToFasta <- function(file_in_path, file_out_path) {
+                .check_bioc(c("Biostrings"), "fastqToFasta")
                 data <- readLines(file_in_path)
-                fasta <- DNAStringSet(data[seq(1,length(data),4)+1])
+                fasta <- Biostrings::DNAStringSet(data[seq(1,length(data),4)+1])
                 names(fasta) <- data[seq(1,length(data),4)]
-                writeXStringSet(fasta, file_out_path)
+                Biostrings::writeXStringSet(fasta, file_out_path)
             }
 
 
         #### canuHistogramToKmerTable
+
 
             #' Convert a kmer report file from Canu into a table that can be accepted by genomescope
             #' Use http://qb.cshl.edu/genomescope/genomescope2.0/
             #'
             #' @param file_in_path The path to the kmer report file
             #' @param file_out_path The path to the table file to write
-            #' @examples canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt", "kmer_report.txt")
-            #' @export canuHistogramToKmerTable
-            #' canuHistogramToKmerTable
-
+            #' @examples
+            #' \dontrun{
+            #' canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt", "kmer_report.txt")
+            #' }
+            #' @export
             canuHistogramToKmerTable <- function(file_in_path, file_out_path) {
 
                 dat <- readLines(file_in_path)
@@ -2626,6 +2662,7 @@
 
         #### drawAlignment
 
+
             #' Generate a multiple alignment graphic using ggplot
             #'
             #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
@@ -2649,14 +2686,11 @@
             #' @param ticks_text_size Size of x-axis ticks text
             #' @param order Order in which to display the members of the alignment
             #' @param color_pal Color palette to use
-            #' @importFrom phangorn read.aa
-            #' @import tidyr
-            #' @import ggplot2
-            #' @import ggtree  
-            #' @export
             #' @examples
+            #' \dontrun{
             #' drawAlignment()
-
+            #' }
+            #' @export
             drawAlignment <- function(   
                                 infile,
                                 monolist,
@@ -3041,21 +3075,22 @@
 
             #### annotatePDB
 
-                #' Import chemcial data
-                #'
-                #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
-                #' @param infile The multiple alignment to (analyze and) plot.
-                #' @param roi Plot a subset of the alignment. 
-                #' @param consensus Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
-                #' @param funct_assoc Include in the output graphic a line plot of the association between AA residues and 
-                #' @importFrom phangorn read.aa
-                #' @import phangorn
-                #' @import ggtree  
-                #' @export
-                #' @examples
-                #' annotatePDB()
 
+                    #' Import chemcial data
+                    #'
+                    #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
+                    #' @param pdb_in_path Not yet documented.
+                    #' @param alignment_in_path Not yet documented.
+                    #' @param pdb_name_in_alignment Not yet documented.
+                    #' @param highlights_data Not yet documented.
+                    #' @param out_file Not yet documented.
+                    #' @examples
+                    #' \dontrun{
+                    #' annotatePDB()
+                    #' }
+                    #' @export
                     annotatePDB <- function(pdb_in_path, alignment_in_path, pdb_name_in_alignment, highlights_data, out_file) {
+                        rlang::check_installed(c("bio3d"), reason = "to use annotatePDB()")
 
                         ## Read in PDB file
                             pdb <- bio3d::read.pdb(pdb_in_path)

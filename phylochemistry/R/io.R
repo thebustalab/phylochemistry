@@ -5,15 +5,17 @@
 
         #### readCSV
 
+
             #' Interactive selection of a CSV file to read
             #'
-            #' This function allows the user to interactively select a CSV file to read. 
+            #' This function allows the user to interactively select a CSV file to read.
             #' The file can be delimited by either a comma or a space.
             #'
-            #' @param sep A character vector indicating the delimiter to use when reading the file. 
+            #' @param sep A character vector indicating the delimiter to use when reading the file.
             #'            The default is a comma (","), but a space (" ") can also be used.
             #' @return A data frame containing the contents of the selected CSV file.
             #' @examples
+            #' \dontrun{
             #' \dontrun{
             #' # To read a CSV file with comma delimiter
             #' data <- readCSV()
@@ -21,8 +23,8 @@
             #' # To read a CSV file with space delimiter
             #' data <- readCSV(sep = " ")
             #' }
+            #' }
             #' @export
-
             readCSV <- function(sep = c(",", " ")) {
                 if (sep[1] == ",") {
                     return(readr::read_csv(file.choose()))
@@ -35,6 +37,7 @@
 
         #### writeCSV
 
+
             #' Write a monolist to a CSV file
             #'
             #' This function allows the user to interactively select a location to save a monolist as a CSV file.
@@ -43,17 +46,19 @@
             #' @return None. The function writes the monolist to a file and does not return a value.
             #' @examples
             #' \dontrun{
+            #' \dontrun{
             #' # To write a monolist to a CSV file
             #' writeCSV(monolist)
             #' }
+            #' }
             #' @export
-
             writeCSV <- function(monolist) {
                 writeMonolist(monolist = monolist, monolist_out_path = file.choose(new = TRUE))
             }
 
 
         #### readMonolist
+
 
             #' Read a monolist from a CSV file or URL
             #'
@@ -63,14 +68,15 @@
             #' @return A data frame containing the contents of the monolist.
             #' @examples
             #' \dontrun{
+            #' \dontrun{
             #' # To read a monolist from a local file
             #' monolist <- readMonolist("path/to/monolist.csv")
             #'
             #' # To read a monolist from a URL
             #' monolist <- readMonolist("http://example.com/monolist.csv")
             #' }
+            #' }
             #' @export
-
             readMonolist <- function( monolist_in_path ) {
                 if (length(grep("http", monolist_in_path)) > 0) {
                     monolist <- read_csv(monolist_in_path, show_col_types = FALSE)        
@@ -83,14 +89,13 @@
 
         #### writeMonolist
 
+
             #' Writes a monolist
             #'
             #' @param monolist The monolist to write out
             #' @param monolist_out_path The path to where the monolist should be written
-            #' @examples
+            #' @param ... Not yet documented.
             #' @export
-            #' writeMonolist
-
             writeMonolist <- function( monolist, monolist_out_path, ... ) {
                 write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
                 # write_csv(monolist, file = monolist_out_path)
@@ -99,16 +104,14 @@
 
         #### readPolylist
 
+
             #' Reads a polylist
             #'
             #' Reads a spreadsheet in polylist format (wide format, multiple column and row headers), and converts it into tidy format
             #' @param polylist_in_path The path to the polylist (in .csv format) to be read
             #' @param centroid The characters in the cell that defines the boundaries of the multiple row and column headers
             #' @param table_value_unit The name to be given to the column that will contain the values in the polylist table
-            #' @examples
             #' @export
-            #' readPolylist
-
             readPolylist <- function(   
                                 polylist_in_path,
                                 centroid = "~~~",
@@ -162,16 +165,14 @@
 
         #### writePolylist
 
+
             #' Writes a polylist
-            #' 
+            #'
             #' This function allows the user to interactively select a location to save a polylist as a CSV file.
             #'
             #' @param polylist The polylist to write out
             #' @param polylist_out_path The path to where the polylist should be written
-            #' @examples
             #' @export
-            #' writePolylist
-
             writePolylist <- function( polylist, polylist_out_path ) {
                 write.table( polylist, file = polylist_out_path, sep = ",", row.names = FALSE, col.names = FALSE)
             }
@@ -179,15 +180,14 @@
 
         #### writeSupplementalTable
 
+
             #' Writes a human-readable supplemental table of quantitative data
             #'
             #' @param supplementalTable The data to write out
             #' @param round_level The number of decimal places summary statistics should have
             #' @param file_out_path The path to the location where the file should be written
-            #' @examples
+            #' @param replicates Not yet documented.
             #' @export
-            #' writeSupplementalTable
-
             writeSupplementalTable <- function(supplementalTable, round_level, file_out_path, replicates) {
         
                 # Make new object from input
@@ -331,6 +331,11 @@
 
         #### renameFile
 
+            #' Rename (move) a file, creating the destination folder if needed
+            #'
+            #' @param from Not yet documented.
+            #' @param to Not yet documented.
+            #' @export
             renameFile <- function(from, to) {
                 todir <- dirname(to)
                 if (!isTRUE(file.info(todir)$isdir)) dir.create(todir, recursive=TRUE)
@@ -340,14 +345,13 @@
 
         #### openRGD
 
+
                 #' Open an RScript stored on Google Drive
                 #'
-                #' @param drive_share_link
-                #' @examples
+                #' @param drive_share_link Not yet documented.
                 #' @export
-                #' openRGD
-
                 openRGD <- function(drive_share_link) {
+                    rlang::check_installed(c("googledrive"), reason = "to use openRGD()")
 
                     file_name <- googledrive::drive_get(
                         id = googledrive::as_id(drive_share_link)
@@ -371,14 +375,13 @@
 
         #### closeRGD
 
+
             #' Save and close the current RScript to Google Drive
             #'
-            #' @param drive_share_link
-            #' @examples
+            #' @param drive_share_link Not yet documented.
             #' @export
-            #' closeRGD
-
             closeRGD <- function(drive_share_link){
+                rlang::check_installed(c("rstudioapi", "googledrive"), reason = "to use closeRGD()")
 
                 rstudioapi::documentSave()
 
@@ -407,6 +410,7 @@
 
         #### buildPolylist
 
+
             #' Build a human-readable matrix of samples, analytes, and measurements
             #'
             #' @param samples_monolist_in_path The monolist of samples to be used in building the polylist. Should contain a column "sample_unique_ID".
@@ -415,10 +419,7 @@
             #' @param centroid The characters to use in the centroid
             #' @param polylist_out_path The path to which the polylist should be written
             #' @keywords lists
-            #' @examples
             #' @export
-            #' buildPolylist
-
             buildPolylist <-    function(  
                                     samples_monolist_in_path,
                                     analytes_monolist_in_path,
@@ -481,13 +482,11 @@
 
         #### OsDirectoryPathCorrect
 
+
             #' OS-aware correction of directory paths
             #'
             #' @param directory_path The path to correct
-            #' @examples
             #' @export
-            #' OsDirectoryPathCorrect
-
             OsDirectoryPathCorrect <- function( directory_path ) {
 
                 ## Detect OS
@@ -537,13 +536,11 @@
 
         #### OsPathCorrect
 
+
             #' OS-aware correction of paths
             #'
             #' @param path The path to correct
-            #' @examples
             #' @export
-            #' OsPathCorrect
-
             OsPathCorrect <- function( path ) {
 
                 ## Detect OS
@@ -575,35 +572,36 @@
 
         #### dropNA
 
+
             #' drops NAs from a vector
             #'
-            #' @param x The vector to drop NAs from 
-            #' @examples
+            #' @param x The vector to drop NAs from
             #' @export
-            #' dropNA
-
             dropNA <- function( x ) { return(x[!is.na(x)]) }
 
 
         #### numbersOnly
 
+            #' Test whether every element can be read as a number
+            #'
+            #' @param x Not yet documented.
+            #' @export
             numbersOnly <- function(x) { all(suppressWarnings(!is.na(as.numeric(as.character(x))))) }
 
 
         #### generateQRcodes
 
+
             #' Create major and minor axes ticks and labels
             #'
             #' @param share_link Share link to Google Sheet with QR code metadata
-            #' @examples
             #' @export
-            #' analyzeImage
-
             generateQRcodes <- function( share_link ) {
+                rlang::check_installed(c("qrencoder", "cowplot", "ggpubr", "png", "googlesheets4"), reason = "to use generateQRcodes()")
 
                 ## Read in the Google docs spreadsheet
 
-                    data <- read_sheet(share_link)
+                    data <- googlesheets4::read_sheet(share_link)
 
                 ## Create QR codes for the plants
 

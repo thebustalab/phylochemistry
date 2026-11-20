@@ -4,14 +4,11 @@
 
         #### readTree
 
+
             #' Reads a phylogenetic tree
             #'
             #' @param tree_in_path The path to the phylogenetic tree
-            #' @importFrom ape read.tree
-            #' @examples
             #' @export
-            #' readTree
-
             readTree <- function( tree_in_path ) {
 
                 ## Read and return the tree
@@ -21,14 +18,12 @@
 
         #### writeTree
 
+
             #' Writes a phylogenetic tree
             #'
             #' @param tree_out_path The path to where the tree should be written
-            #' @importFrom ape write.tree
-            #' @examples
+            #' @param tree Not yet documented.
             #' @export
-            #' writeTree
-
             writeTree <- function( tree, tree_out_path ) {
                 ape::write.tree( phy = tree, file = tree_out_path )
             }
@@ -38,13 +33,11 @@
 
         #### descendantsFortified
 
+
             #' Provides a descendants list for a fortified tree
             #'
             #' @param fortified_tree The fortified tree that should be analyzed
-            #' @examples
             #' @export
-            #' descendantsFortified
-
             descendantsFortified <- function(fortified_tree){
         
                 input <- fortified_tree
@@ -73,12 +66,13 @@
 
         #### buildTree
 
+
             #' Construct various types of phylogenetic trees from alignments or other trees
             #'
             #' This function allows the construction of phylogenetic trees using different types of input data.
             #'
             #' @param scaffold_type The type of information that should be used to build the tree. Options include "amin_alignment", "nucl_alignment", "newick", or "url".
-            #' @param scaffold_in_path The path to the information that should be used to build the tree. If using a URL, a recommended source is: 
+            #' @param scaffold_in_path The path to the information that should be used to build the tree. If using a URL, a recommended source is:
             #'        https://sftp.kew.org/pub/treeoflife/current_release/tree/species/
             #' @param members The tips of the tree that should be included. Default is to include everything.
             #' @param ml TRUE/FALSE whether to use maximum likelihood when constructing the tree.
@@ -86,10 +80,7 @@
             #' @param bootstrap TRUE/FALSE whether to calculate bootstrap values for tree nodes.
             #' @param ancestral_states TRUE/FALSE whether to calculate ancestral states at nodes in the tree. Requires specifying a root via the 'root' parameter.
             #' @param root The tree tip to use as the root of the tree.
-            #' @examples
             #' @export
-            #' buildTree
-
             buildTree <-    function(
                                 scaffold_type = c("amin_alignment", "nucl_alignment", "newick", "url"),
                                 scaffold_in_path,
@@ -381,17 +372,12 @@
 
         #### pruneTree
 
+
             #' Prune a tree so it only contains user-specified tips
             #'
             #' @param tree_in Either the path to the tree to manipulate, an in-memory phylo object, or a fortified tree
             #' @param tips_to_keep The tips to keep
-            #' @importFrom ape drop.tip
-            #' @importFrom ggtree fortify
-            #' @importFrom dplyr right_join
-            #' @examples
             #' @export
-            #' pruneTree
-
             pruneTree <- function(tree_in, tips_to_keep) {
 
                 ## Check if tree_in is a path, a phylo object, or a fortified tree
@@ -422,17 +408,18 @@
 
         #### collapseTree
 
+
             #' Create a high-level cladogram from a low-level tree
             #'
-            #' This function takes a detailed phylogenetic tree and collapses it into a higher-level cladogram based on specified associations. 
+            #' This function takes a detailed phylogenetic tree and collapses it into a higher-level cladogram based on specified associations.
             #' It is useful for summarizing complex trees by grouping tips into broader categories.
             #'
             #' @param tree A phylogenetic tree to manipulate. It can be an object of class 'phylo' or a fortified tree.
-            #' @param associations A data frame or matrix with two columns. The first column contains tree tip names, and the second column contains the 
+            #' @param associations A data frame or matrix with two columns. The first column contains tree tip names, and the second column contains the
             #'        corresponding higher-level group names to which these tips should be summarized.
             #' @return A phylogenetic tree of class 'phylo' with tips renamed and collapsed according to the provided associations.
-            #' @export
             #' @examples
+            #' \dontrun{
             #' # Example usage:
             #' # tree <- readTree("path/to/tree")
             #' # associations <- data.frame(tip_name = c("tip1", "tip2"), group_name = c("group1", "group1"))
@@ -440,7 +427,8 @@
             #' # plot(collapsed_tree)
             #'
             #' collapseTree()
-
+            #' }
+            #' @export
             collapseTree <- function(tree, associations) {
 
                 ## Convert associations into a data frame
@@ -487,6 +475,16 @@
 
         #### runPhylogeneticAnalyses
 
+            #' Run phylogenetic comparative analyses on traits
+            #'
+            #' @param traits Not yet documented.
+            #' @param column_w_names_of_tiplabels Not yet documented.
+            #' @param column_w_names_of_traits Not yet documented.
+            #' @param column_w_values_for_traits Not yet documented.
+            #' @param tree Not yet documented.
+            #' @param replicates Not yet documented.
+            #' @param cost Not yet documented.
+            #' @export
             runPhylogeneticAnalyses <- function(
                 traits,
                 column_w_names_of_tiplabels,
@@ -687,11 +685,13 @@
 
         #### harmonizeTreeTraits
 
+
             #' Harmonizes species in a set of traits (wide or long) and a tree
             #'
             #' @param traits A data frame in which the first column contains the names of the species
             #' @param tree A phylo object containing the tree
-
+            #' @param column_w_names_of_tiplabels Not yet documented.
+            #' @export
             harmonizeTreeTraits <- function( traits, column_w_names_of_tiplabels, tree ) {
 
                 ## Make data frame and first column characters
@@ -721,16 +721,17 @@
 
         #### *phylogeneticSignal
 
-            #' Compute phylogenetic signal for continuous and discrete traits
-            #'
-            #' @param trait A data frame of traits where the first column is tree tip names that exactly match the tree tip labels
-            #' @param tree A phylogenetic tree (class phylo) with tips that exactly match the names of trait
-            #' @param replicates Number of random replications to run
-            #' @param cost Optional. A specialized transition matrix
-            #' @examples
-            #' @export
-            #' phylogeneticSignal
 
+                #' Compute phylogenetic signal for continuous and discrete traits
+                #'
+                #' @param tree A phylogenetic tree (class phylo) with tips that exactly match the names of trait
+                #' @param replicates Number of random replications to run
+                #' @param cost Optional. A specialized transition matrix
+                #' @param traits Not yet documented.
+                #' @param column_w_names_of_tiplabels Not yet documented.
+                #' @param column_w_names_of_traits Not yet documented.
+                #' @param column_w_values_for_traits Not yet documented.
+                #' @export
                 phylogeneticSignal <- function(
                     traits,
                     column_w_names_of_tiplabels,
@@ -872,6 +873,14 @@
 
         #### independentContrasts
 
+            #' Phylogenetically independent contrasts for traits
+            #'
+            #' @param traits Not yet documented.
+            #' @param column_w_names_of_tiplabels Not yet documented.
+            #' @param column_w_names_of_traits Not yet documented.
+            #' @param column_w_values_for_traits Not yet documented.
+            #' @param tree Not yet documented.
+            #' @export
             independentContrasts <- function(
                 traits,
                 column_w_names_of_tiplabels,
@@ -920,6 +929,14 @@
 
         #### phyloTraitDistance
 
+            #' Compare phylogenetic and trait distances
+            #'
+            #' @param traits Not yet documented.
+            #' @param column_w_names_of_tiplabels Not yet documented.
+            #' @param column_w_values_for_traits Not yet documented.
+            #' @param tree Not yet documented.
+            #' @param mode Not yet documented.
+            #' @export
             phyloTraitDistance <- function(
                 traits,
                 column_w_names_of_tiplabels,
@@ -968,6 +985,14 @@
 
         #### *ancestralTraits
 
+            #' Reconstruct ancestral trait values on a tree
+            #'
+            #' @param traits Not yet documented.
+            #' @param column_w_names_of_tiplabels Not yet documented.
+            #' @param column_w_names_of_traits Not yet documented.
+            #' @param column_w_values_for_traits Not yet documented.
+            #' @param tree Not yet documented.
+            #' @export
             ancestralTraits <- function(
                 traits,
                 column_w_names_of_tiplabels,
@@ -1032,8 +1057,15 @@
 
         #### geom_ancestral_pie
 
-            #' Plots pie charts for data at any node using columns `trait` and `value`
 
+            #' Plots pie charts for data at any node using columns `trait` and `value`
+            #' @param data Not yet documented.
+            #' @param pie_size Not yet documented.
+            #' @param pie_alpha Not yet documented.
+            #' @param pie_fill_colors Not yet documented.
+            #' @param pie_border_size Not yet documented.
+            #' @param ... Not yet documented.
+            #' @export
             geom_ancestral_pie <- function(
                 data,
                 pie_size = 0.1,

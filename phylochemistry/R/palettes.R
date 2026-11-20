@@ -2,8 +2,20 @@
 
 ## Load color schemes
 
+    #' Continuous colour palette 1
+    #'
+    #' @format A character vector of five colours.
+    #' @export
     cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
+    #' Continuous colour palette 2
+    #'
+    #' @format A character vector of five colours.
+    #' @export
     cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
+    #' Discrete colour palette
+    #'
+    #' @format A character vector of 25 colours.
+    #' @export
     discrete_palette <- c(
         "dodgerblue2", "#E31A1C", # red
         "green4",

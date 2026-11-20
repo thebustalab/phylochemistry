@@ -3,6 +3,10 @@
 
         #### parseRISFile
 
+                #' Parse an RIS reference file into a table
+                #'
+                #' @param filepath Not yet documented.
+                #' @export
                 parseRISFile <- function(filepath) {
                     cat(Sys.time(), "- Parsing RIS file: ", filepath, "\n")
                     lines <- readLines(filepath, warn = FALSE)
@@ -105,16 +109,20 @@
 
         #### removeSpecialCharacters
 
+            #' Replace special characters in text
+            #'
+            #' @param text_string Not yet documented.
+            #' @export
             removeSpecialCharacters <- function(text_string) {
         
-                    text_string <- gsub("−", "-", text_string)
-                    text_string <- gsub("≤", " ", text_string)
-                    text_string <- gsub("≥", " ", text_string)
-                    text_string <- gsub("′", " ", text_string)
-                    text_string <- gsub("✔", " ", text_string)
-                    text_string <- gsub("⋅", " ", text_string)
-                    text_string <- gsub("ƛ", " ", text_string)
-                    text_string <- gsub("ƛ", " ", text_string)
+                    text_string <- gsub("\u2212", "-", text_string)
+                    text_string <- gsub("\u2264", " ", text_string)
+                    text_string <- gsub("\u2265", " ", text_string)
+                    text_string <- gsub("\u2032", " ", text_string)
+                    text_string <- gsub("\u2714", " ", text_string)
+                    text_string <- gsub("\u22C5", " ", text_string)
+                    text_string <- gsub("\u019B", " ", text_string)
+                    text_string <- gsub("\u019B", " ", text_string)
                     text_string <- stringi::stri_trans_general(text_string, "Latin")
                     text_string <- gsub("[^[:alnum:] !\"#$%&'()*+,-./:\\{\\};<=>~?@[\\]", "", text_string)
                 
@@ -125,6 +133,14 @@
 
         #### splitIntoChunks
 
+            #' Split text into overlapping chunks of tokens
+            #'
+            #' @param data_frame Not yet documented.
+            #' @param column_to_split Not yet documented.
+            #' @param source_ID_column Not yet documented.
+            #' @param chunk_size_in_tokens Not yet documented.
+            #' @param overlap_in_tokens Not yet documented.
+            #' @export
             splitIntoChunks <- function(
                 data_frame,
                 column_to_split,
@@ -132,6 +148,7 @@
                 chunk_size_in_tokens,
                 overlap_in_tokens
             ) {
+                rlang::check_installed(c("tokenizers"), reason = "to use splitIntoChunks()")
 
                 output <- list()
                 for( i in 1:dim(data_frame)[1] ) {
@@ -192,7 +209,16 @@
 
         #### extractTerms
 
+                #' Extract candidate key terms from text columns
+                #'
+                #' @param dataframe Not yet documented.
+                #' @param cols Not yet documented.
+                #' @param min_freq_for_terms Not yet documented.
+                #' @param min_n_words_per_term Not yet documented.
+                #' @param return Not yet documented.
+                #' @export
                 extractTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term, return = c("dataframe", "terms")) {
+                    rlang::check_installed(c("litsearchr", "stopwords"), reason = "to use extractTerms()")
                     cat(Sys.time(), "- extractTerms() called with dataframe dimensions: "); print(dim(dataframe))
                     
                     text_vector <- list()
@@ -234,6 +260,11 @@
 
         #### searchField
 
+            #' Search text for a set of query terms
+            #'
+            #' @param subject_list Not yet documented.
+            #' @param query_list Not yet documented.
+            #' @export
             searchField <- function(subject_list, query_list) {
 
                 ## Make query list unique, remove all commas from the subjects so output can be written as csv
@@ -325,6 +356,12 @@
             # library(plotly)
             # library(rhandsontable)
 
+            #' Interactive literature analysis app
+            #'
+            #' @param jupyter Not yet documented.
+            #' @param openai_api_key Not yet documented.
+            #' @param xi_api_key Not yet documented.
+            #' @export
             analyzeLiterature <- function(jupyter = TRUE, openai_api_key = "busta_lab", xi_api_key = "busta_lab") {
     
                 ## API Keys
@@ -699,6 +736,12 @@
 
         #### computeEmbeddings
 
+            #' Compute text embeddings with the OpenAI API
+            #'
+            #' @param df Not yet documented.
+            #' @param column_to_embed Not yet documented.
+            #' @param openai_api_key Not yet documented.
+            #' @export
             computeEmbeddings <- function(df, column_to_embed, openai_api_key) {
     
                 embedding_df <- list()
@@ -726,7 +769,12 @@
 
         #### readPDF
 
+            #' Read the text of a PDF file
+            #'
+            #' @param path_to_pdf Not yet documented.
+            #' @export
             readPDF <- function(path_to_pdf) {
+                rlang::check_installed(c("pdftools", "signal", "pspline"), reason = "to use readPDF()")
 
                 # set the path to the PDF file to be read
                     txt <- pdftools::pdf_text(path_to_pdf)

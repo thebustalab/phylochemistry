@@ -3,6 +3,11 @@
 
     ## Set up better shapiroTest warning messages
 
+        #' Shapiro-Wilk normality test by group
+        #'
+        #' @param data Not yet documented.
+        #' @param var Not yet documented.
+        #' @export
         shapiroTest <- function(data, var) {
             # Capture the variable using tidy evaluation
             var <- rlang::enquo(var)
@@ -13,7 +18,7 @@
             # Check if any group has fewer than 3 observations
             group_sizes <- dplyr::summarize(data, size = dplyr::n())
             if (any(group_sizes$size < 3)) {
-                stop("One of the groups has fewer than 3 members. A Shapiro–Wilk test cannot be run on such a group. 
+                stop("One of the groups has fewer than 3 members. A Shapiro\u2013Wilk test cannot be run on such a group. 
                     Please filter your data or choose new groups.")
             }
             
@@ -38,7 +43,7 @@
             if (modified) {
                 message(
                     "Note: Found a group with exactly 3 data points where at least two were identical.\n",
-                    "A tiny bit of noise was added to these data points, because the Shapiro–Wilk test\n",
+                    "A tiny bit of noise was added to these data points, because the Shapiro\u2013Wilk test\n",
                     "p-value can be artificially low in such edge cases due to test mechanics.\n",
                     "Consider carefully whether you want to interpret the results of the test, even with noise added."
                 )
@@ -51,6 +56,11 @@
 
     ## Rename some stats functions so they use camelCase
 
+        #' Levene's test for equal variances
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @export
         leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
 
         # tTest() takes data + formula (rstatix::t_test, unchanged), or a fitted linear model from buildModel()
@@ -58,6 +68,14 @@
         # a Welch-style t-test. Each group's slope and standard error come from a line fitted to that group
         # alone, so no group's scatter is pooled with another's (tukeyTest(slopes_of =) pools them). p.adj is
         # Holm-adjusted by default; estimate = group2 slope - group1 slope, so pGroups() reads it like tukeyTest.
+        #' t-tests on data or on a fitted model
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @param compare Not yet documented.
+        #' @param slopes_of Not yet documented.
+        #' @param p.adjust.method Not yet documented.
+        #' @export
         tTest <- function( data, ..., compare = NULL, slopes_of = NULL, p.adjust.method = "holm" ) {
             is_model <- inherits(data, "lm") ||
                 (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))
@@ -153,6 +171,11 @@
             out
         }
 
+        #' Wilcoxon rank-sum test
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @export
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
 
         # anovaTest() takes data + formula, or a fitted linear model from buildModel(), and returns the course's
@@ -160,6 +183,11 @@
         # Sequential sums of squares (stats::anova), so the rows add up to the total and share sums to 1 (to rounding).
         # Columns: term, sum_of_squares, free_values (degrees of freedom), variance (sum_of_squares / free_values),
         # F (variance / noise variance), p, share (sum_of_squares / total sum of squares).
+        #' Analysis of variance table
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @export
         anovaTest <- function( data, ... ) {
             if (inherits(data, "lm") ||
                 (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))) {
@@ -206,6 +234,15 @@
         # response and "euclidean" it gives anovaTest()'s sums of squares and F exactly. Rows: one per term,
         # added in order (balanced designs: order does not matter), then noise, then total.
         # Everything is inline, not in helpers, because the WebR shim generator carries only the ...Test functions.
+        #' Permutational multivariate analysis of variance
+        #'
+        #' @param data Not yet documented.
+        #' @param formula Not yet documented.
+        #' @param distance Not yet documented.
+        #' @param permutations Not yet documented.
+        #' @param profile Not yet documented.
+        #' @param sample Not yet documented.
+        #' @export
         permanovaTest <- function( data, formula, distance = "euclidean", permutations = 999, profile = NULL, sample = NULL ) {
             if (missing(formula) || !inherits(formula, "formula") || length(formula) != 3) {
                 stop("permanovaTest(): give a data table and a formula, e.g. permanovaTest(cbind(limonene, pinene) ~ species * fertilizer).", call. = FALSE)
@@ -289,6 +326,13 @@
         # slopes_of = the slope of that numeric predictor in each group, Tukey-adjusted via emmeans. The output
         # has tukey_hsd's columns (estimate = group2 - group1) so pGroups() reads both. Everything is inline,
         # not in helpers, because the WebR shim generator carries only the ...Test functions themselves.
+        #' Tukey's honest significant difference test
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @param compare Not yet documented.
+        #' @param slopes_of Not yet documented.
+        #' @export
         tukeyTest <- function( data, ..., compare = NULL, slopes_of = NULL ) {
             is_model <- inherits(data, "lm") ||
                 (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))
@@ -404,6 +448,12 @@
         # residual, the model path re-reads the fitted data. Output has rstatix's columns, so pGroups()
         # reads it; the model path also carries each group's mean for pGroups()' estimate column.
         # Inline, not in helpers, because the WebR shim generator carries only the ...Test functions.
+        #' Games-Howell post hoc test
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @param compare Not yet documented.
+        #' @export
         gamesHowellTest <- function( data, ..., compare = NULL ) {
             is_model <- inherits(data, "lm") ||
                 (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))
@@ -451,6 +501,12 @@
         # p-value, so a student never learns the formula was reversed (the t and Wilcoxon tests do error,
         # and the console explains that error). The check is inlined in each wrapper, not a shared
         # helper, because the WebR shim generator carries only the ...Test functions themselves.
+        #' Kruskal-Wallis test
+        #'
+        #' @param data Not yet documented.
+        #' @param formula Not yet documented.
+        #' @param ... Not yet documented.
+        #' @export
         kruskalTest <- function( data, formula, ... ) {
             lhs <- if (length(formula) == 3) all.vars(formula[[2]]) else character(0)
             rhs <- if (length(formula) == 3) all.vars(formula[[3]]) else character(0)
@@ -463,6 +519,12 @@
             rstatix::kruskal_test( data = ungroup(data), formula = formula, ... )
         }
 
+        #' Dunn's post hoc test
+        #'
+        #' @param data Not yet documented.
+        #' @param formula Not yet documented.
+        #' @param ... Not yet documented.
+        #' @export
         dunnTest <- function( data, formula, ... ) {
             lhs <- if (length(formula) == 3) all.vars(formula[[2]]) else character(0)
             rhs <- if (length(formula) == 3) all.vars(formula[[3]]) else character(0)
@@ -477,6 +539,12 @@
 
         # pairwiseWilcoxTest() makes the same cross-group correction as pairwiseTTest() below (see
         # that comment): on grouped data every p-value is adjusted together, not group by group.
+        #' Pairwise Wilcoxon tests
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @param p.adjust.method Not yet documented.
+        #' @export
         pairwiseWilcoxTest <- function( data, ..., p.adjust.method = "holm" ) {
             if (!dplyr::is_grouped_df(data)) {
                 return(rstatix::pairwise_wilcox_test(data = data, ..., p.adjust.method = p.adjust.method))
@@ -504,6 +572,13 @@
         # rstatix, unchanged.
         # pool.sd = FALSE (2026-11-03, Lucas): each pair is a Welch t-test on its own two spreads, so, like
         # tTest() and gamesHowellTest(), it needs no equal-variance check first. rstatix's default pools.
+        #' Pairwise t-tests
+        #'
+        #' @param data Not yet documented.
+        #' @param ... Not yet documented.
+        #' @param p.adjust.method Not yet documented.
+        #' @param pool.sd Not yet documented.
+        #' @export
         pairwiseTTest <- function( data, ..., p.adjust.method = "holm", pool.sd = FALSE ) {
             if (!dplyr::is_grouped_df(data)) {
                 return(rstatix::pairwise_t_test(data = data, ..., pool.sd = pool.sd, p.adjust.method = p.adjust.method))
@@ -525,13 +600,11 @@
 
         #### pGroups
 
+
             #' Determine which samples are identical based on p values
             #'
-            #' @param data 
-            #' @examples
+            #' @param data Not yet documented.
             #' @export
-            #' pGroups
-
             pGroups <- function(data) {
 
                 ## Letters from a pairwise table (tukeyTest, dunnTest, ...): a shared letter = no
@@ -571,17 +644,19 @@
 
         #### fitGaussians
 
+
             #' Fit a Gaussian curve to a set of x y data
             #'
             #' This function may work better if you feed it a smoothed signal, or add smoothing to the derivatives
-            #' @param x
-            #' @param y
-            #' @param smoothing_order
-            #' @param smoothing_window
-            #' @export
+            #' @param x Not yet documented.
+            #' @param y Not yet documented.
+            #' @param peak_detection_threshold Not yet documented.
+            #' @param peak_means_stdevs_heights Not yet documented.
             #' @examples
+            #' \dontrun{
             #' fitGaussians()
-
+            #' }
+            #' @export
             fitGaussians <- function(
                                 x, 
                                 y, 
@@ -985,13 +1060,6 @@
 
         #### mode
 
-            #' mode
-            #'
-            #' @param x
-            #' @param ignore_zero
-            #' @export
-            #' @examples
-            #' mode()
 
             # mode <- function(x, ignore_zero = FALSE) {
                 
@@ -1009,6 +1077,15 @@
             #         }
             # }
 
+            #' mode
+            #'
+            #' @param x Not yet documented.
+            #' @param ignore_zero Not yet documented.
+            #' @examples
+            #' \dontrun{
+            #' mode()
+            #' }
+            #' @export
             mode <- function(x, ignore_zero = FALSE) {
               # Create a frequency table (do not use factor levels for ordering)
               freq_table <- as.data.frame(table(x), stringsAsFactors = FALSE)
@@ -1038,14 +1115,16 @@
 
         #### geomSignif
 
+
             #' geomSignif
             #'
-            #' @param data
-            #' @param orientation
-            #' @export
+            #' @param data Not yet documented.
+            #' @param orientation Not yet documented.
             #' @examples
+            #' \dontrun{
             #' geomSignif()
-
+            #' }
+            #' @export
             geomSignif <- function(data, orientation) {
 
                 if (orientation == "horizontal") {
@@ -1113,15 +1192,20 @@
 
         #### grubbsFilter
 
+
             #' grubbsFilter on grouped data
             #'
-            #' @param data
-            #' @param threshold
-            #' @export
+            #' @param data Not yet documented.
+            #' @param threshold Not yet documented.
+            #' @param col Not yet documented.
+            #' @param ... Not yet documented.
             #' @examples
+            #' \dontrun{
             #' grubbsFilter()
-
+            #' }
+            #' @export
             grubbsFilter <- function(data, col, threshold = 0.05, ...) {
+                rlang::check_installed(c("outliers"), reason = "to use grubbsFilter()")
 
                 if (dplyr::is_grouped_df(data)) {
                   return(dplyr::do(data, grubbsFilter(., col, ...))) 
@@ -1156,16 +1240,20 @@
 
         #### anovaTestMean
 
+
             #' anova on means and standard deviations
             #'
-            #' @param category
-            #' @param n
-            #' @param mean
-            #' @param stdev
-            #' @export
+            #' @param n Not yet documented.
+            #' @param object Not yet documented.
+            #' @param ybar Not yet documented.
+            #' @param s Not yet documented.
+            #' @param ... Not yet documented.
+            #' @param ylabel Not yet documented.
             #' @examples
+            #' \dontrun{
             #' anovaTestMean()
-
+            #' }
+            #' @export
             anovaMean <- function(object, n, ybar, s, ..., ylabel="ylabel") {
                 ## the object argument contains the levels of the factor
                 df <- sum(n)-length(ybar)
@@ -1190,6 +1278,13 @@
             }
 
 
+            #' ANOVA from group means, standard deviations and sizes
+            #'
+            #' @param category Not yet documented.
+            #' @param n Not yet documented.
+            #' @param mean Not yet documented.
+            #' @param stdev Not yet documented.
+            #' @export
             anovaTestMean <- function(category, n, mean, stdev) {
 
                 output <- as.data.frame(
@@ -1210,6 +1305,14 @@
 
         #### allPairsTTestMean
 
+            #' Pairwise t-tests from group means, standard deviations and sizes
+            #'
+            #' @param category Not yet documented.
+            #' @param mean Not yet documented.
+            #' @param stdev Not yet documented.
+            #' @param n Not yet documented.
+            #' @param correction_method Not yet documented.
+            #' @export
             allPairsTTestMean <- function(category, mean, stdev, n, correction_method = c("BH", "holm", "bonferroni", "none")) {
 
                 df <- data.frame(

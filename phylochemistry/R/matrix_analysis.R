@@ -5,6 +5,12 @@
 
         #### extractModules
 
+            #' Extract modules around bait genes from an edge list
+            #'
+            #' @param data Not yet documented.
+            #' @param baits Not yet documented.
+            #' @param module_size Not yet documented.
+            #' @export
             extractModules <- function(data, baits, module_size) {
                 ## All this code assumes a Gene1-Gene2-Metric format    
                     connections_to_baits <- list()
@@ -28,16 +34,17 @@
 
         #### buildNetwork_OG
 
+
             #' Build a network from an edgelist
             #'
             #' @param edgelist A data frame with names of origin nodes in first column, destination nodes in second column, and an optional third column of edgeweights.
             #' @param node_attributes A dataframe of attributes associated with the nodes.
             #' @param facet_variable Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
-            #' @import
-            #' @export
             #' @examples
+            #' \dontrun{
             #' buildNetwork_OG()
-
+            #' }
+            #' @export
             buildNetwork_OG <- function( edgelist, node_attributes = NULL, facet_variable = NULL ) {
 
                 ## Make sure the edgelist is a dataframe and that its first two columns are characters
@@ -131,6 +138,7 @@
 
         #### collapseReciprocalEdges
 
+
             #' Collapse duplicate and reciprocal edges in an edgelist (used by buildNetwork)
             #'
             #' Rows that are identical in every column are always dropped. Beyond that, each
@@ -145,7 +153,7 @@
             #' @param directed NULL (decide from the data, as above), TRUE (never collapse
             #'   reciprocal pairs), or FALSE (always collapse, keeping the first occurrence).
             #' @param tol Relative tolerance for comparing numeric attribute columns.
-
+            #' @export
             collapseReciprocalEdges <- function(edgelist, directed = NULL, tol = sqrt(.Machine$double.eps)) {
 
                 n_input <- nrow(edgelist)
@@ -219,17 +227,18 @@
 
         #### buildNetwork
 
+
             #' Build a network from an edgelist
             #'
             #' @param edgelist A data frame with origin nodes in the first column, destination nodes in the second column, and optional edge attributes in columns 3+, which are carried through to the returned edges frame as-is. No `weight` column is invented: for the force-directed layout, a column named `edgeweight` or `weight` is used if present, otherwise column 3.
             #' @param node_attributes A dataframe of attributes associated with the nodes. First column must contain node names.
             #' @param facet_variable Currently unused; retained for API compatibility.
             #' @param directed How to handle node pairs that appear more than once. Rows identical in every column are always dropped. NULL (default) decides from the data: if every A->B / B->A pair (and any same-direction repeat) agrees on all edge attributes, as in a long-format distance or correlation matrix, the edgelist is collapsed to one edge per pair; if any pair disagrees, every edge is kept. TRUE always keeps both directions; FALSE always collapses, keeping the first occurrence of each pair. A message reports what was done. Note that when both directions are kept, their segments are drawn on top of one another, so a plot will only show one of them.
-            #' @import
-            #' @export
             #' @examples
+            #' \dontrun{
             #' buildNetwork()
-
+            #' }
+            #' @export
             buildNetwork <- function(edgelist, node_attributes = NULL, facet_variable = NULL, directed = NULL) {
 
                 edgelist <- as.data.frame(edgelist, stringsAsFactors = FALSE)
@@ -382,6 +391,13 @@
 
         #### makeRectangular
 
+            #' Fill in missing combinations of a long table
+            #'
+            #' @param dataframe Not yet documented.
+            #' @param names_from Not yet documented.
+            #' @param values_from Not yet documented.
+            #' @param values_fill Not yet documented.
+            #' @export
             makeRectangular <- function(dataframe, names_from, values_from, values_fill = c(0, NA)) {
                 wide_data <- pivot_wider(dataframe, names_from = names_from, values_from = values_from, values_fill = values_fill[1])
                 names <- unique(unlist(dataframe[,colnames(dataframe) == names_from]))
@@ -392,6 +408,7 @@
 
         #### normalize
 
+
             #' Normalizes a vector of numbers to a range of zero to one.
             #'
             #' @param x The vector to normalize
@@ -399,10 +416,8 @@
             #' @param old_max The maximum of the old range
             #' @param new_min The minimum of the new range, defaults to 0
             #' @param new_max The maximum of the new range, defaults to 1
-            #' @examples
+            #' @param na_zero Not yet documented.
             #' @export
-            #' normalize
-
             normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1, na_zero = FALSE ) {
 
                 if ( length(old_min) == 0 & length(old_max) == 0 ) {
@@ -426,10 +441,13 @@
 
         #### movingAverage
 
+
             #' Compute a moving average
             #'
             #' movingAverage
-
+            #' @param x Not yet documented.
+            #' @param n Not yet documented.
+            #' @export
             movingAverage <- function(x, n = 5){
             
                 stats::filter(x, rep(1 / n, n), sides = 2)
@@ -439,13 +457,15 @@
 
         #### bootstrap
 
+
             #' Runs bootstrapping on categorical data; from github sgibb/bootstrap
             #'
-            #' @param x
-            #' @param fun
+            #' @param x Not yet documented.
+            #' @param fun Not yet documented.
             #' @param n
-            #' bootstrap  
-
+            #' bootstrap
+            #' @param mc.cores Not yet documented.
+            #' @export
             bootstrap <- function(x, fun, n = 1000L, mc.cores = getOption("mc.cores", 2L)) {
                 # Match the function if given as a character string
                 fun <- match.fun(fun)
@@ -500,15 +520,6 @@
 
         #### runMatrixAnalyses
 
-            #' RETIRED. Use runMatrixAnalysis() (singular) instead.
-            #'
-            #' Retired 2026-09-22. This was a wide-data-only fork of runMatrixAnalysis(); every
-            #' capability it had has been ported into the singular, which also handles long-format
-            #' input. Calling it raises an error explaining the migration.
-            #'
-            #' @param ... Ignored; the function always stops.
-            #' @export
-            #' runMatrixAnalyses 
 
                 ## ── RETIRED 2026-09-22 ────────────────────────────────────────────────────────────────
                 ## runMatrixAnalyses() (plural) was a wide-data-only fork of runMatrixAnalysis()
@@ -528,6 +539,14 @@
                 ##
                 ## It is kept as a stop() rather than deleted so that an old script gets a sentence
                 ## telling it what to do, instead of "could not find function".
+                #' RETIRED. Use runMatrixAnalysis() (singular) instead.
+                #'
+                #' Retired 2026-09-22. This was a wide-data-only fork of runMatrixAnalysis(); every
+                #' capability it had has been ported into the singular, which also handles long-format
+                #' input. Calling it raises an error explaining the migration.
+                #'
+                #' @param ... Ignored; the function always stops.
+                #' @export
                 runMatrixAnalyses <- function(...) {
                     stop(
                         "runMatrixAnalyses() (plural) was retired on 2026-09-22. Use runMatrixAnalysis() ",
@@ -545,81 +564,10 @@
 
         #### runMatrixAnalysis
 
-            #' Runs a matrix analysis (clustering, kmeans, pca, distances).
+            #' The ggproto Stat behind geom_cut()
             #'
-            #' The single matrix-analysis verb for the course. It absorbed runMatrixAnalyses()
-            #' (plural) on 2026-09-22; the plural is retired and now stops with a migration message.
-            #'
-            #' @param data The data frame or tibble to analyze. May be WIDE (one column per analyte,
-            #'   named in columns_w_values_for_single_analyte) or LONG (one row per sample per
-            #'   analyte, named in column_w_names_of_multiple_analytes plus
-            #'   column_w_values_for_multiple_analytes).
-            #' @param analysis The type of analysis to run: one of "pca", "pca_ord", "pca_dim",
-            #'   "mca", "mca_ord", "mca_dim", "mds", "mds_ord", "mds_dim", "tsne", "dbscan",
-            #'   "kmeans", "hclust", "hclust_phylo", "hclust_cat" or "dist".
-            #' @param parameters Analysis-specific parameters. For kmeans, the number of clusters;
-            #'   for dbscan, c(eps, MinPts). Required for both.
-            #' @param column_w_names_of_multiple_analytes Long input: the column holding analyte names.
-            #' @param column_w_values_for_multiple_analytes Long input: the column holding the values.
-            #' @param columns_w_values_for_single_analyte Wide input: the columns holding the values.
-            #' @param columns_w_additional_analyte_info Per-analyte metadata to carry through.
-            #' @param columns_w_sample_ID_info The columns that together identify a sample.
-            #' @param transpose Analyse analytes as rows rather than samples. Default FALSE.
-            #' @param distance_method What "similar" means. "euclidean" (default) and "manhattan"
-            #'   (absolute differences; less pulled by one extreme variable); "gower" (mixed numeric
-            #'   and categorical columns, via cluster::daisy); "correlation" (1 - Pearson r between
-            #'   samples: same pattern, regardless of size) and "cosine" (1 - cosine similarity: same
-            #'   direction, regardless of length); "bray_curtis" (abundance data; shared absences do
-            #'   not count as similarity), "jaccard" (presence/absence: any value > 0 is present) and
-            #'   "aitchison" (compositional data: euclidean on centred log-ratios; zeros are replaced
-            #'   with half the smallest positive value, with a message). bray_curtis, jaccard and
-            #'   aitchison need raw non-negative values, so pass scale_variance = FALSE with them.
-            #'   All are computed in base R (no vegan), so every one also runs in WebR.
-            #' @param agglomeration_method The linkage rule for hierarchical clustering. Only used
-            #'   when tree_method = "linkage_dendrogram".
-            #' @param tree_method How a tree is built for "hclust"/"hclust_phylo".
-            #'   "linkage_dendrogram" (the DEFAULT) is hierarchical clustering proper: it honours
-            #'   agglomeration_method and returns bootstrap support. "neighbor_joining" is the
-            #'   phylogenetic method, works from the distance matrix alone, IGNORES
-            #'   agglomeration_method, and returns no bootstrap values.
-            #' @param unknown_sample_ID_info Sample IDs to treat as unknowns for nearest-neighbour
-            #'   matching against the rest (used by the GC-MS workflows).
-            #' @param components_to_return How many components to return. Default 2.
-            #' @param scale_variance Center each column and divide it by its standard deviation
-            #'   before computing distances. Default TRUE for every analysis (including "hclust",
-            #'   which defaulted to FALSE until 2026-09-28). Pass FALSE for compositional data --
-            #'   where every column is a share of the same whole and is already on one scale.
-            #' @param na_replacement "mean" (default), "none", "zero" or "drop".
-            #' @param output_format "wide" (default) or "long". For analysis = "dist" this chooses
-            #'   the RETURN TYPE: "wide" gives a base R `dist` object, "long" gives one row per pair
-            #'   (sample_1, sample_2, distance) plus the sample ID columns, which is the shape an
-            #'   edge list wants.
-            #' @examples
-            #' @export
-            #' runMatrixAnalysis 
-
-            #' geom_cut
-            #'
-            #' Draw the cut on a dendrogram, in the right place, from the plot's own data.
-            #'
-            #' WHY THIS EXISTS (2026-09-23). A cut IS a vertical line across the tree, and saying so
-            #' with `geom_vline(xintercept = 5)` is wrong twice over: `ape::as.phylo()` HALVES an
-            #' hclust's merge heights, and `ggtree` then measures x from the ROOT, so the tips sit at
-            #' `max(height)/2` and a cut at height 5 actually belongs at `max(x) - 5/2`. Drawn the naive
-            #' way the line lands out past the tip labels. `geom_cut()` does that conversion, so the
-            #' student writes the same height they cut at and the picture agrees with the `cluster`
-            #' column.
-            #'
-            #' It reads only `x`, which ggtree always maps, so nothing extra has to be threaded into
-            #' the layer. Tips are the rightmost nodes, so everything left of `max(x)` is a join.
-            #'
-            #' @param height Cut height, the same value passed to `parameters = c(height = ...)`.
-            #' @param k Number of groups, the same value passed to `parameters = c(n_clusters = k)`
-            #'   (or the older `c(k)` / `c(k = k)`). The line is drawn midway between the two joins
-            #'   that bracket that number of groups.
-            #' @examples
-            #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(height = 5)
-            #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(k = 4)
+            #' Places the cut line on a dendrogram from the plot's own `x` data; used by [geom_cut()].
+            #' @format A ggplot2 `ggproto` object.
             #' @export
             StatCut <- ggplot2::ggproto("StatCut", ggplot2::Stat,
                 required_aes = "x",
@@ -654,6 +602,34 @@
             )
 
 
+            #' geom_cut
+            #'
+            #' Draw the cut on a dendrogram, in the right place, from the plot's own data.
+            #'
+            #' WHY THIS EXISTS (2026-09-23). A cut IS a vertical line across the tree, and saying so
+            #' with `geom_vline(xintercept = 5)` is wrong twice over: `ape::as.phylo()` HALVES an
+            #' hclust's merge heights, and `ggtree` then measures x from the ROOT, so the tips sit at
+            #' `max(height)/2` and a cut at height 5 actually belongs at `max(x) - 5/2`. Drawn the naive
+            #' way the line lands out past the tip labels. `geom_cut()` does that conversion, so the
+            #' student writes the same height they cut at and the picture agrees with the `cluster`
+            #' column.
+            #'
+            #' It reads only `x`, which ggtree always maps, so nothing extra has to be threaded into
+            #' the layer. Tips are the rightmost nodes, so everything left of `max(x)` is a join.
+            #'
+            #' @param height Cut height, the same value passed to `parameters = c(height = ...)`.
+            #' @param k Number of groups, the same value passed to `parameters = c(n_clusters = k)`
+            #'   (or the older `c(k)` / `c(k = k)`). The line is drawn midway between the two joins
+            #'   that bracket that number of groups.
+            #' @param linetype Not yet documented.
+            #' @param colour Not yet documented.
+            #' @param ... Not yet documented.
+            #' @examples
+            #' \dontrun{
+            #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(height = 5)
+            #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(k = 4)
+            #' }
+            #' @export
             geom_cut <- function(height = NULL, k = NULL, linetype = "dashed",
                                  colour = "grey40", ...) {
 
@@ -685,6 +661,57 @@
             }
 
 
+                #' Runs a matrix analysis (clustering, kmeans, pca, distances).
+                #'
+                #' The single matrix-analysis verb for the course. It absorbed runMatrixAnalyses()
+                #' (plural) on 2026-09-22; the plural is retired and now stops with a migration message.
+                #'
+                #' @param data The data frame or tibble to analyze. May be WIDE (one column per analyte,
+                #'   named in columns_w_values_for_single_analyte) or LONG (one row per sample per
+                #'   analyte, named in column_w_names_of_multiple_analytes plus
+                #'   column_w_values_for_multiple_analytes).
+                #' @param analysis The type of analysis to run: one of "pca", "pca_ord", "pca_dim",
+                #'   "mca", "mca_ord", "mca_dim", "mds", "mds_ord", "mds_dim", "tsne", "dbscan",
+                #'   "kmeans", "hclust", "hclust_phylo", "hclust_cat" or "dist".
+                #' @param parameters Analysis-specific parameters. For kmeans, the number of clusters;
+                #'   for dbscan, c(eps, MinPts). Required for both.
+                #' @param column_w_names_of_multiple_analytes Long input: the column holding analyte names.
+                #' @param column_w_values_for_multiple_analytes Long input: the column holding the values.
+                #' @param columns_w_values_for_single_analyte Wide input: the columns holding the values.
+                #' @param columns_w_additional_analyte_info Per-analyte metadata to carry through.
+                #' @param columns_w_sample_ID_info The columns that together identify a sample.
+                #' @param transpose Analyse analytes as rows rather than samples. Default FALSE.
+                #' @param distance_method What "similar" means. "euclidean" (default) and "manhattan"
+                #'   (absolute differences; less pulled by one extreme variable); "gower" (mixed numeric
+                #'   and categorical columns, via cluster::daisy); "correlation" (1 - Pearson r between
+                #'   samples: same pattern, regardless of size) and "cosine" (1 - cosine similarity: same
+                #'   direction, regardless of length); "bray_curtis" (abundance data; shared absences do
+                #'   not count as similarity), "jaccard" (presence/absence: any value > 0 is present) and
+                #'   "aitchison" (compositional data: euclidean on centred log-ratios; zeros are replaced
+                #'   with half the smallest positive value, with a message). bray_curtis, jaccard and
+                #'   aitchison need raw non-negative values, so pass scale_variance = FALSE with them.
+                #'   All are computed in base R (no vegan), so every one also runs in WebR.
+                #' @param agglomeration_method The linkage rule for hierarchical clustering. Only used
+                #'   when tree_method = "linkage_dendrogram".
+                #' @param tree_method How a tree is built for "hclust"/"hclust_phylo".
+                #'   "linkage_dendrogram" (the DEFAULT) is hierarchical clustering proper: it honours
+                #'   agglomeration_method and returns bootstrap support. "neighbor_joining" is the
+                #'   phylogenetic method, works from the distance matrix alone, IGNORES
+                #'   agglomeration_method, and returns no bootstrap values.
+                #' @param unknown_sample_ID_info Sample IDs to treat as unknowns for nearest-neighbour
+                #'   matching against the rest (used by the GC-MS workflows).
+                #' @param components_to_return How many components to return. Default 2.
+                #' @param scale_variance Center each column and divide it by its standard deviation
+                #'   before computing distances. Default TRUE for every analysis (including "hclust",
+                #'   which defaulted to FALSE until 2026-09-28). Pass FALSE for compositional data --
+                #'   where every column is a share of the same whole and is already on one scale.
+                #' @param na_replacement "mean" (default), "none", "zero" or "drop".
+                #' @param output_format "wide" (default) or "long". For analysis = "dist" this chooses
+                #'   the RETURN TYPE: "wide" gives a base R `dist` object, "long" gives one row per pair
+                #'   (sample_1, sample_2, distance) plus the sample ID columns, which is the shape an
+                #'   edge list wants.
+                #' @param ... Not yet documented.
+                #' @export
                 runMatrixAnalysis <-    function(
                                             data,
                                             analysis = c(
@@ -1779,14 +1806,13 @@
 
         #### findClusterParameters
 
+
             #' Interactively find clustering parameters from a distance matrix and source matrix
             #'
-            #' @param dist_matrix
-            #' @param matrix
-            #' @examples
+            #' @param dist_matrix Not yet documented.
+            #' @param matrix Not yet documented.
+            #' @param analysis Not yet documented.
             #' @export
-            #' findClusterParameters
-
             findClusterParameters <- function(dist_matrix, matrix, analysis = c("dbscan", "kmeans")) {
 
                 ui <-   navbarPage(title = "Cluster Parameter Selection", id = "navbar",

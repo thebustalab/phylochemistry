@@ -4,7 +4,13 @@
 
     #### searchNCBI
 
+        #' Search NCBI protein records and return their sequences
+        #'
+        #' @param search_term Not yet documented.
+        #' @param retmax Not yet documented.
+        #' @export
         searchNCBI <- function(search_term, retmax = 5) {
+            .check_bioc(c("Biostrings"), "searchNCBI")
 
             # Search, message if no results
                 search_results <- rentrez::entrez_search(db = "protein", term = search_term, retmax = retmax)
@@ -19,11 +25,18 @@
                     rentrez::entrez_fetch(db = "protein", id = search_results$ids, rettype = "fasta"),
                     file = temp_fasta
                 )
-                    return(readAAStringSet(temp_fasta))
+                    return(Biostrings::readAAStringSet(temp_fasta))
         }
 
     #### searchPubMed
 
+        #' Search PubMed and return article metadata
+        #'
+        #' @param search_terms Not yet documented.
+        #' @param pubmed_api_key Not yet documented.
+        #' @param sort Not yet documented.
+        #' @param retmax_per_term Not yet documented.
+        #' @export
         searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
 
               pm_entries <- character()
@@ -107,6 +120,20 @@
 
     #### embedText
 
+        #' Embed text with a language model
+        #'
+        #' @param df Not yet documented.
+        #' @param column_name Not yet documented.
+        #' @param hf_api_key Not yet documented.
+        #' @param path_to_glove_file Not yet documented.
+        #' @param local Not yet documented.
+        #' @param model_id Not yet documented.
+        #' @param batch_size Not yet documented.
+        #' @param max_retries Not yet documented.
+        #' @param timeout_sec Not yet documented.
+        #' @param server_url Not yet documented.
+        #' @param server_token Not yet documented.
+        #' @export
         embedText <- function(
           df,
           column_name,
@@ -120,15 +147,7 @@
           server_url = Sys.getenv("EMBED_SERVER_URL", ""),
           server_token = Sys.getenv("EMBED_SERVER_TOKEN", "")
         ) {
-          # deps
-          suppressPackageStartupMessages({
-            library(jsonlite)
-            library(httr)
-            library(dplyr)
-            library(tibble)
-            library(data.table)
-            library(stringr)
-          })
+          # deps: imported through the package NAMESPACE (no longer attached to the session)
 
           # --- prep input ----
           df <- as_tibble(df)
@@ -348,6 +367,22 @@
 
     #### generateText
 
+        #' Generate text with a language model
+        #'
+        #' @param df Not yet documented.
+        #' @param prompt_column Not yet documented.
+        #' @param system_column Not yet documented.
+        #' @param hf_api_key Not yet documented.
+        #' @param model_id Not yet documented.
+        #' @param provider Not yet documented.
+        #' @param max_retries Not yet documented.
+        #' @param timeout_sec Not yet documented.
+        #' @param temperature Not yet documented.
+        #' @param verbose Not yet documented.
+        #' @param max_new_tokens Not yet documented.
+        #' @param server_url Not yet documented.
+        #' @param server_token Not yet documented.
+        #' @export
         generateText <- function(
           df,
           prompt_column,
@@ -363,13 +398,7 @@
           server_url = Sys.getenv("GENERATE_SERVER_URL", ""),
           server_token = Sys.getenv("GENERATE_SERVER_TOKEN", "")
         ) {
-          suppressPackageStartupMessages({
-            library(jsonlite)
-            library(httr)
-            library(tibble)
-            library(dplyr)
-            library(stringr)
-          })
+          # deps: imported through the package NAMESPACE (no longer attached to the session)
 
           df <- as_tibble(df)
           if (!prompt_column %in% colnames(df)) stop("`prompt_column` not found in df.")
@@ -549,6 +578,17 @@
 
     #### embedAminoAcids
 
+        #' Embed amino acid sequences with a protein language model
+        #'
+        #' @param amino_acid_stringset Not yet documented.
+        #' @param dataframe Not yet documented.
+        #' @param biolm_api_key Not yet documented.
+        #' @param nvidia_api_key Not yet documented.
+        #' @param platform Not yet documented.
+        #' @param input_type Not yet documented.
+        #' @param model_name Not yet documented.
+        #' @param seq_column Not yet documented.
+        #' @export
         embedAminoAcids <- function(
                 amino_acid_stringset = NULL,
                 dataframe = NULL,
@@ -623,7 +663,7 @@
                 
                 # Construct the API endpoint URL dynamically based on model_name
                 biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
-                response_content <- postForm(biolm_url, .opts = list(postfields = payload, httpheader = headers, followlocation = TRUE), style = "httppost")
+                response_content <- RCurl::postForm(biolm_url, .opts = list(postfields = payload, httpheader = headers, followlocation = TRUE), style = "httppost")
                 
                 # Parse the JSON response
                 result_data <- jsonlite::fromJSON(response_content)

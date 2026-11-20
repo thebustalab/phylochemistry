@@ -16,12 +16,13 @@
             #' @param max_rt (optional) A numeric value specifying the largest retention time to process. This acts as a filter to exclude data above this threshold. Default is NULL, meaning no maximum retention time filter is applied.
             #' @param force A logical value indicating whether to convert all CDF files even if they have already been converted previously. Default is FALSE, meaning only files without existing CSV counterparts will be converted.
             #' @examples
+            #' \dontrun{
             #' # Convert CDF files to CSV with default m/z range and no retention time filtering
             #' convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"))
             #'
             #' # Convert CDF files to CSV with specified m/z and retention time ranges, forcing conversion
             #' convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"), min_mz = 100, max_mz = 700, min_rt = 5, max_rt = 20, force = TRUE)
-            #'
+            #' }
             #' @export
             convertCDFstoCSVs <- function(
                                             paths_to_cdfs, 
@@ -31,6 +32,7 @@
                                             max_rt = NULL, 
                                             force = FALSE
                                         ) {
+                .check_bioc(c("xcms"), "convertCDFstoCSVs")
 
                 if ( force == FALSE ) {
                     paths_to_cdfs <- paths_to_cdfs[!file.exists(paste0(paths_to_cdfs, ".csv"))]
@@ -111,14 +113,12 @@
 
         #### extractChromatogramsFromCSVs
 
-            #' Extract total ion chromatograms from csv files containing mass spectral data
-            #'
-            #' @param paths_to_cdf_csvs Paths to the cdf.csvs
-            #' @param path_to_existing_chromatograms_csv Path to an existing chromatograms.csv file. The function will append new chromatograms to this file that are not already in it.
-            #' @examples
-            #' @export
-            #' extractChromatogramsFromCSVs
 
+                #' Extract total ion chromatograms from csv files containing mass spectral data
+                #'
+                #' @param paths_to_cdf_csvs Paths to the cdf.csvs
+                #' @param path_to_existing_chromatograms_csv Path to an existing chromatograms.csv file. The function will append new chromatograms to this file that are not already in it.
+                #' @export
                 extractChromatogramsFromCSVs <- function( paths_to_cdf_csvs, path_to_existing_chromatograms_csv = NULL ) {
 
                     ## If the chromatograms.csv already exists, figure out which chromatograms are already in there and don't analyze those
@@ -170,10 +170,11 @@
             #' @param analysis_directory_path A character string specifying the path to the directory containing subdirectories with peak list files. Each subdirectory should contain a "peaks_monolist.csv" file.
             #' @return A data frame containing the merged peak lists. The data frame includes the first nine columns of each peak list, with the 'area' column converted to numeric.
             #' @examples
+            #' \dontrun{
             #' # Example usage:
             #' # Merge peak lists from a specified directory
             #' merged_peaks <- mergePeakLists("/path/to/analysis_directory")
-            #'
+            #' }
             #' @export
             mergePeakLists <- function(analysis_directory_path) {
 
@@ -212,6 +213,7 @@
 
         #### readChromatograms
 
+
             #' Import chromatograms stored as ChemStation exported .csv files
             #'
             #' Allows the user to import chromatograms stored as .csv files. Files should have originated from an Agilent GC system running ChemStation
@@ -220,10 +222,11 @@
             #' @param dir A directory containing (ONLY) the chromatogram(s) that are to be plotted
             #' @param normalize_level Level at which to normalize chromatogram
             #' @param normalize_range y range to consider during normalization. Useful for normalizing but excluding solvent peak(s), for example
-            #' @export
             #' @examples
+            #' \dontrun{
             #' readChromatograms()
-
+            #' }
+            #' @export
             readChromatograms <- function( dir, normalize_level = c("none", "var1", "var2"), normalize_range = NULL ) {
 
                 ## Get paths to the .csv files in the directory "dir"
@@ -309,15 +312,18 @@
 
         #### readSpectra
 
+
             #' Import mass spectral data
             #'
             #' Used to import one or more mass spectra and collect the data in a dataframe.
             #' The names of the files containing the mass spectra must have the following format: "var2~var3-var4.csv", with var1 being the file's position in the directory
             #' @param dir The directory containing the mass spectral (.csv) files of interest and nothing else
-            #' @export
+            #' @param source Not yet documented.
             #' @examples
+            #' \dontrun{
             #' readSpectra()
-
+            #' }
+            #' @export
             readSpectra <- function( dir, source = c("phylochemistry", "agilent") ) {
 
                 ## Set working directory and prepare the data frame
@@ -362,16 +368,19 @@
 
         #### analyzeMassSpectralImages
 
+
             #' Use image analysis to obtain csv of mass spectrum from an image.
             #'
             #' Read a png with left-most pixel low mass, right-most pixel high mass
             #' Filename: reference~compoundName_lowmz-rightmz
             #' @param image_directory_in_path The directory containing the images to be read.
-            #' @export
             #' @examples
+            #' \dontrun{
             #' analyzeMassSpectralImages()
-
+            #' }
+            #' @export
             analyzeMassSpectralImages <- function(image_directory_in_path) {
+                rlang::check_installed(c("imager"), reason = "to use analyzeMassSpectralImages()")
 
                 images_to_analyze <- dir(image_directory_in_path)[grep(".png", dir(image_directory_in_path))]
                 
@@ -392,7 +401,7 @@
                         reference <- gsub("~.*$", "", images_to_analyze[image_to_analyze])
 
                         image <- imager::load.image(paste0(image_directory_in_path, "/", images_to_analyze[image_to_analyze]))
-                        image <- as_tibble(as.data.frame(as.cimg(image)))
+                        image <- as_tibble(as.data.frame(imager::as.cimg(image)))
                         image <- image[image$cc == 1,]
                         image$y <- -as.numeric(image$y)
                         image$y <- image$y + -min(image$y)
@@ -517,16 +526,20 @@
 
         #### crystallinity
 
+
             #' Extract 720 and 720 wavenumber intensities from FTIR data
             #'
             #' Filenames: 123~123-1.csv
             #' To use plots: library(gridExtra); nCol <- floor(sqrt(length(plots))); do.call("grid.arrange", c(plots, ncol=nCol))
             #' @param data_directory_in_path The directory containing the data to be read and processed.
-            #' @export
+            #' @param make_plots Not yet documented.
             #' @examples
+            #' \dontrun{
             #' crystallinity()
-
+            #' }
+            #' @export
             crystallinity <- function(data_directory_in_path, make_plots = TRUE) {
+                rlang::check_installed(c("signal"), reason = "to use crystallinity()")
 
                 data_directory_in_path <- OsDirectoryPathCorrect(data_directory_in_path)
 
@@ -643,18 +656,17 @@
 
         #### analyzeImages
 
+
             #' Create major and minor axes ticks and labels
             #'
-            #' @param major_ticks Values at which major ticks should be generated
-            #' @param minor_freq Number of minor ticks between each major tick 
-            #' @examples
+            #' @param folder_URL Not yet documented.
+            #' @param monolist_out_path Not yet documented.
             #' @export
-            #' analyzeImages
-
             analyzeImages <- function(
                                 folder_URL,
                                 monolist_out_path
                             ) {
+                rlang::check_installed(c("googledrive", "imager", "quadrangle", "magick", "exifr", "raster"), reason = "to use analyzeImages()")
 
                 files <- googledrive::drive_ls(folder_URL)
                 file <- 1
@@ -761,7 +773,7 @@
 
                             imRed <<- imager::imrotate(imRed, input$rotation)
                             
-                            image_as_df <- as_tibble(as.data.frame(as.cimg(imRed)))
+                            image_as_df <- as_tibble(as.data.frame(imager::as.cimg(imRed)))
                             image_as_df$y <- -as.numeric(image_as_df$y)
                             image_as_df$y <- image_as_df$y + -min(image_as_df$y)
                             image_as_df <- pivot_wider(image_as_df, names_from = cc, values_from = value)
@@ -1176,7 +1188,7 @@
                                         imCal[, , , 3] = Bi
                                         imCal <- imager::as.cimg(imCal)
                                         
-                                        image_calibrated <<- as_tibble(as.data.frame(as.cimg(imCal)))
+                                        image_calibrated <<- as_tibble(as.data.frame(imager::as.cimg(imCal)))
                                         image_calibrated$y <- -as.numeric(image_calibrated$y)
                                         image_calibrated$y <- image_calibrated$y + -min(image_calibrated$y)
                                         image_calibrated <- pivot_wider(image_calibrated, names_from = cc, values_from = value)
@@ -1504,14 +1516,12 @@
 
         #### drawBaseline
 
+
             #' Draws a baseline on a signal
             #'
             #' @param data x, y dataframe
             #' @param prelim_baseline_window interval at which to draw baseline
-            #' @examples
             #' @export
-            #' drawBaseline
-
             drawBaseline <- function(data, prelim_baseline_window) {
       
                 n_prelim_baseline_windows <- floor(length(data$x)/prelim_baseline_window)
