@@ -22,7 +22,7 @@
 
                     ## Define default arguments
 
-                        arguments <- vector()
+                        arguments <- list()  # was vector(); `$<-` coerced it to a list with a warning
                         arguments$input <- input_histogram_file # parser$add_argument("-i", "--input", help = "input histogram file")
                         arguments$output <- output_dir # parser$add_argument("-o", "--output", help = "output directory name")
                         arguments$ploidy <- ploidy # parser$add_argument("-p", "--ploidy", type = "integer", default = 2, help = "ploidy (1, 2, 3, 4, 5, or 6) for model to use [default 2]")
