@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# pre-push — the pre-publish gate for this public tool repo.
+#
+# public_tools/AGENTS.md's pre-publish checklist, made automatic (2026-10-08). For every commit
+# this push would send (not just the tip), githooks/scan_diff.py --push --identity checks:
+#   - added lines, binary blobs, file names, commit and tag messages, for credential shapes
+#     (API keys, tokens, PEM blocks, `export *_API_KEY=`, `ACCESS_TOKEN = "..."`), private
+#     paths/hosts (/home/bustalab, /Users/bust0037, the lab's hostnames and IP range) and the
+#     checklist's identity grep (umn.edu including the bare domain, @gmail, the x500). Each
+#     content hit is named as path:line @commit;
+#   - every author / committer / tagger email is a GitHub noreply;
+#   - every image blob's EXIF / XMP / ICC / text metadata is parsed against an allowlist of
+#     harmless fields; GPS, make/model/serial, names, paths and unknown fields block
+#     (TIFF/HEIC blocked outright).
+# What it cannot check stays on the checklist: what an image SHOWS, whether security advice is
+# accurate, PDF/Office metadata, and the fresh-clone smoke test.
+#
+# Fails CLOSED: an uncomputable range (remote ref not fetched) or a missing scanner blocks.
+#
+# Install once per clone, from the repo root:
+#     ln -sf ../../githooks/pre-push .git/hooks/pre-push
+#
+# Override for a one-off push you have read the findings for:
+#     SKIP_SECRET_SCAN=1 git push
+#
+# Regression test: python3 githooks/test_scan_diff.py
+
+set -uo pipefail
+
+REFS_TMP=$(mktemp)
+trap 'rm -f "$REFS_TMP"' EXIT
+cat >"$REFS_TMP"
+
+if [ "${SKIP_SECRET_SCAN:-}" = "1" ]; then
+    echo "pre-push: secret scan skipped (SKIP_SECRET_SCAN=1)" >&2
+    exit 0
+fi
+
+# Located from the repo root, not dirname "$0": the hook is a SYMLINK into .git/hooks.
+SCANNER="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/githooks/scan_diff.py"
+if [ ! -f "$SCANNER" ]; then
+    echo "pre-push: BLOCKED — githooks/scan_diff.py is missing, so nothing can be scanned." >&2
+    echo "Restore it (git checkout -- githooks/scan_diff.py) or bypass with SKIP_SECRET_SCAN=1." >&2
+    exit 1
+fi
+
+ZERO=0000000000000000000000000000000000000000
+status=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ -z "${local_sha:-}" ] && continue
+    [ "$local_sha" = "$ZERO" ] && continue          # deleting a ref
+    python3 "$SCANNER" --push "$local_sha" "${remote_sha:-$ZERO}" "${1:-origin}" --identity || status=1
+done < "$REFS_TMP"
+
+exit $status
