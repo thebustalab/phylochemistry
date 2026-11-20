@@ -3,18 +3,22 @@
 ## downloaded from the same public URL on first use and cached on disk. The readers and
 ## column types are the ones datasets.R used.
 
+.read_busta_spectral_library <- function(path) readr::read_csv(path, col_types = c(Compound_common_name = "c"))
+.read_plant_phylogeny        <- function(path) ape::read.tree(path)
+.read_plant_species          <- function(path) readr::read_csv(path, show_col_types = FALSE)
+
 .lab_datasets <- list(
     busta_spectral_library = list(
         url  = "https://thebustalab.github.io/phylochemistry/sample_data/busta_spectral_library_v1.csv",
-        read = function(path) readr::read_csv(path, col_types = c(Compound_common_name = "c"))
+        read = ".read_busta_spectral_library"
     ),
     plant_phylogeny = list(
         url  = "https://thebustalab.github.io/data/plant_phylogeny.newick",
-        read = function(path) ape::read.tree(path)
+        read = ".read_plant_phylogeny"
     ),
     plant_species = list(
         url  = "https://thebustalab.github.io/data/plant_species.csv",
-        read = function(path) readr::read_csv(path, show_col_types = FALSE)
+        read = ".read_plant_species"
     )
 )
 
@@ -57,5 +61,5 @@ getLabDataset <- function(name, refresh = FALSE,
         utils::download.file(spec$url, tmp, mode = "wb", quiet = TRUE)
         if (!file.rename(tmp, path)) stop("Could not write the cached copy to ", path, call. = FALSE)
     }
-    spec$read(path)
+    get(spec$read, mode = "function")(path)
 }
