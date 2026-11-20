@@ -46,7 +46,8 @@ This function performs a BLAST search on a set of query sequences against a list
 }
 \examples{
 \dontrun{
-named_subjects_list <- list("species1" = "path/to/species1.fasta", "species2" = "path/to/species2.fasta")
+named_subjects_list <- list("species1" = "path/to/species1.fasta",
+                            "species2" = "path/to/species2.fasta")
 query_in_path <- "path/to/query.fasta"
 sequences_of_interest_directory_path <- "path/to/output/directory"
 blast_module_directory_path <- "/usr/local/ncbi/blast/bin/"
@@ -55,6 +56,8 @@ e_value_cutoff <- 1
 word_size <- 4
 queries_in_output <- TRUE
 monolist_out_path <- "path/to/monolist_output"
-polyBlast(named_subjects_list, query_in_path, sequences_of_interest_directory_path, blast_module_directory_path, blast_mode, e_value_cutoff, word_size, queries_in_output, monolist_out_path)
+polyBlast(named_subjects_list, query_in_path, sequences_of_interest_directory_path,
+          blast_module_directory_path, blast_mode, e_value_cutoff, word_size,
+          queries_in_output, monolist_out_path)
 }
 }

@@ -18,6 +18,7 @@ Use http://qb.cshl.edu/genomescope/genomescope2.0/
 }
 \examples{
 \dontrun{
-canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt", "kmer_report.txt")
+canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt",
+                         "kmer_report.txt")
 }
 }

@@ -35,6 +35,7 @@ This function processes mass spectral data stored in CDF files and converts them
 convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"))
 
 # Convert CDF files to CSV with specified m/z and retention time ranges, forcing conversion
-convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"), min_mz = 100, max_mz = 700, min_rt = 5, max_rt = 20, force = TRUE)
+convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"),
+                  min_mz = 100, max_mz = 700, min_rt = 5, max_rt = 20, force = TRUE)
 }
 }

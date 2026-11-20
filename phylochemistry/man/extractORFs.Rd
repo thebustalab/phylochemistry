@@ -33,7 +33,8 @@ Note: Searching for ORFs in the reverse direction leads to issues during codon a
 \dontrun{
 # Example usage:
 # Extract ORFs from a multifasta file and write them to a new file
-# orfs <- extractORFs("sequences.fasta", write_out_ORFs = TRUE, overwrite = FALSE, alternative_ORFs = TRUE)
+# orfs <- extractORFs("sequences.fasta", write_out_ORFs = TRUE,
+#                     overwrite = FALSE, alternative_ORFs = TRUE)
 # print(orfs)
 }
 }

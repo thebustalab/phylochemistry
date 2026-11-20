@@ -45,7 +45,8 @@ gff_data <- readGFFs(input_frame, subset_mode = "none")
 gff_data <- readGFFs(input_frame, subset_mode = "goi_only", goi = c("gene1", "gene2"))
 
 # Read GFFs and subset by regions around genes of interest (goi)
-gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"), region_reach = 20000)
+gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"),
+                     region_reach = 20000)
 
 # Read GFFs and check for unique gene names
 gff_data <- readGFFs(input_frame, subset_mode = "name_check")

@@ -30,6 +30,7 @@ The function reads a codon table from a predefined URL and filters it based on t
 \examples{
 \dontrun{
 # Reverse translate a protein sequence for Arabidopsis thaliana
-reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta", "peptide.fasta", "Arabidopsis_thaliana")
+reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta",
+                 "peptide.fasta", "Arabidopsis_thaliana")
 }
 }

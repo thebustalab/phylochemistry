@@ -763,7 +763,8 @@
             #' \dontrun{
             #' # Example usage:
             #' # Extract ORFs from a multifasta file and write them to a new file
-            #' # orfs <- extractORFs("sequences.fasta", write_out_ORFs = TRUE, overwrite = FALSE, alternative_ORFs = TRUE)
+            #' # orfs <- extractORFs("sequences.fasta", write_out_ORFs = TRUE,
+            #' #                     overwrite = FALSE, alternative_ORFs = TRUE)
             #' # print(orfs)
             #' }
             #' @export
@@ -1080,7 +1081,8 @@
             #' @details This function performs a BLAST search on a set of query sequences against a list of subject transcriptomes. It supports both nucleotide and protein BLAST searches, and can handle both Unix and Windows operating systems. The function first translates the transcriptomes if necessary, builds BLAST databases, and then performs the BLAST search. The results are processed to remove duplicates and are written to a monolist, which is also saved to a specified output path.
             #' @examples
             #' \dontrun{
-            #' named_subjects_list <- list("species1" = "path/to/species1.fasta", "species2" = "path/to/species2.fasta")
+            #' named_subjects_list <- list("species1" = "path/to/species1.fasta",
+            #'                             "species2" = "path/to/species2.fasta")
             #' query_in_path <- "path/to/query.fasta"
             #' sequences_of_interest_directory_path <- "path/to/output/directory"
             #' blast_module_directory_path <- "/usr/local/ncbi/blast/bin/"
@@ -1089,7 +1091,9 @@
             #' word_size <- 4
             #' queries_in_output <- TRUE
             #' monolist_out_path <- "path/to/monolist_output"
-            #' polyBlast(named_subjects_list, query_in_path, sequences_of_interest_directory_path, blast_module_directory_path, blast_mode, e_value_cutoff, word_size, queries_in_output, monolist_out_path)
+            #' polyBlast(named_subjects_list, query_in_path, sequences_of_interest_directory_path,
+            #'           blast_module_directory_path, blast_mode, e_value_cutoff, word_size,
+            #'           queries_in_output, monolist_out_path)
             #' }
             #' @export
             polyBlast <- function(
@@ -2207,7 +2211,8 @@
                 #' gff_data <- readGFFs(input_frame, subset_mode = "goi_only", goi = c("gene1", "gene2"))
                 #'
                 #' # Read GFFs and subset by regions around genes of interest (goi)
-                #' gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"), region_reach = 20000)
+                #' gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"),
+                #'                      region_reach = 20000)
                 #'
                 #' # Read GFFs and check for unique gene names
                 #' gff_data <- readGFFs(input_frame, subset_mode = "name_check")
@@ -2557,7 +2562,8 @@
             #' @examples
             #' \dontrun{
             #' # Reverse translate a protein sequence for Arabidopsis thaliana
-            #' reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta", "peptide.fasta", "Arabidopsis_thaliana")
+            #' reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta",
+            #'                  "peptide.fasta", "Arabidopsis_thaliana")
             #' }
             #' @export
             reverseTranslate <- function(
@@ -2637,7 +2643,8 @@
             #' @param file_out_path The path to the table file to write
             #' @examples
             #' \dontrun{
-            #' canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt", "kmer_report.txt")
+            #' canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt",
+            #'                          "kmer_report.txt")
             #' }
             #' @export
             canuHistogramToKmerTable <- function(file_in_path, file_out_path) {
