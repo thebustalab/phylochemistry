@@ -4,13 +4,28 @@
 
     #### searchNCBI
 
-        #' Search NCBI protein records and return their sequences
+        #' Search NCBI for protein (or nucleotide) records and return their sequences
         #'
-        #' @param search_term Not yet documented.
-        #' @param retmax Not yet documented.
+        #' @param search_term The term to search for in the NCBI database.
+        #' @param retmax The maximum number of results to return. Default is 5.
+        #' @param type `"protein"` (the default) or `"nucleotide"`.
+        #' @return An `AAStringSet` (protein) or `DNAStringSet` (nucleotide), or `NULL` if nothing matched.
         #' @export
-        searchNCBI <- function(search_term, retmax = 5) {
+        searchNCBI <- function(search_term, retmax = 5, type = "protein") {
             .check_bioc(c("Biostrings"), "searchNCBI")
+            # `type` comes from the phylochemistry.R copy of this function; the protein path is the
+            # modules/language_model_analysis.R version (the one book ch14 ran), unchanged.
+            if (!identical(type, "protein")) {
+                db <- ifelse(type == "protein", "protein", "nucleotide")
+                search_results <- rentrez::entrez_search(db = db, term = search_term, retmax = retmax)
+                if (length(search_results$ids) == 0) {
+                    message("No sequences found for the search term.")
+                    return(NULL)
+                }
+                temp_fasta <- tempfile(fileext = ".fasta")
+                write(rentrez::entrez_fetch(db = db, id = search_results$ids, rettype = "fasta"), file = temp_fasta)
+                return(Biostrings::readDNAStringSet(temp_fasta))
+            }
 
             # Search, message if no results
                 search_results <- rentrez::entrez_search(db = "protein", term = search_term, retmax = retmax)

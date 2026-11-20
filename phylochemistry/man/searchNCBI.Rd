@@ -2,15 +2,20 @@
 % Please edit documentation in R/language_models.R
 \name{searchNCBI}
 \alias{searchNCBI}
-\title{Search NCBI protein records and return their sequences}
+\title{Search NCBI for protein (or nucleotide) records and return their sequences}
 \usage{
-searchNCBI(search_term, retmax = 5)
+searchNCBI(search_term, retmax = 5, type = "protein")
 }
 \arguments{
-\item{search_term}{Not yet documented.}
+\item{search_term}{The term to search for in the NCBI database.}
 
-\item{retmax}{Not yet documented.}
+\item{retmax}{The maximum number of results to return. Default is 5.}
+
+\item{type}{\code{"protein"} (the default) or \code{"nucleotide"}.}
+}
+\value{
+An \code{AAStringSet} (protein) or \code{DNAStringSet} (nucleotide), or \code{NULL} if nothing matched.
 }
 \description{
-Search NCBI protein records and return their sequences
+Search NCBI for protein (or nucleotide) records and return their sequences
 }
