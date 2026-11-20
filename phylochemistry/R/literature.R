@@ -472,6 +472,8 @@
                         profile_data <- suppressMessages(read_csv(profile_data_path))
                         profile_data$status <- "unexplored"
                         profile_data$knn <- "no"
+                        GPT_temperature <- 0
+                        GPT_response <- NULL
                     
                         plot_limits <- reactiveValues(
                             x_axis_start = min(profile_data$Dim_1)*1.1,

@@ -291,7 +291,7 @@
                         message("IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.")
                     }
 
-                    build_tree_substitutions <<- function() {
+                    build_tree_substitutions <- function() {
                         if (length(removals) > 0) {
                             message("The following species were removed: ", paste(removals, collapse = ", "))
                         }
@@ -299,6 +299,7 @@
                             message("The following substitutions were made: ", paste(substitutions, collapse = "; "))
                         }
                     }
+                    assign("build_tree_substitutions", build_tree_substitutions, envir = globalenv())
 
                     ## Drop tree tips not in desired members
                         newick <- ape::drop.tip(newick, newick$tip.label[!newick$tip.label %in% unique(members)])
@@ -396,7 +397,7 @@
                 tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% tips_to_keep])
 
                 ## If the input was a fortified tree, convert back to fortified and join with original
-                if (exists("fortified_tree")) {
+                if (exists("fortified_tree", inherits = FALSE)) {
                     pruned_fortified_tree <- ggtree::fortify(tree)
                     pruned_fortified_tree <- dplyr::right_join(fortified_tree, pruned_fortified_tree, by = "node")
                     return(pruned_fortified_tree)
@@ -461,7 +462,7 @@
                 message("Branch lengths have been set to one.")
 
                 ## If the input was a fortified tree, convert back to fortified and join with original
-                if (exists("fortified_tree")) {
+                if (exists("fortified_tree", inherits = FALSE)) {
                     pruned_fortified_tree <- ggtree::fortify(collapsed_tree)
                     pruned_fortified_tree <- dplyr::right_join(fortified_tree, pruned_fortified_tree, by = "node")
                     return(pruned_fortified_tree)

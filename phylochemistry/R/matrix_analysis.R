@@ -1877,13 +1877,17 @@
 
                 )
                             
+                picked <- NULL
                 server <- function(input, output, session) {
 
                     output$plot1 <- renderPlot({
 
-                        n_clusters <<- input$n_clusters
-                        cluster_k <<- input$cluster_k
-                        cluster_threshold <<- input$cluster_threshold
+                        ## read by runMatrixAnalysis() after the app closes
+                        assign("n_clusters", input$n_clusters, envir = globalenv())
+                        assign("cluster_k", input$cluster_k, envir = globalenv())
+                        assign("cluster_threshold", input$cluster_threshold, envir = globalenv())
+                        picked <<- list(n_clusters = input$n_clusters, cluster_k = input$cluster_k,
+                                        cluster_threshold = input$cluster_threshold)
 
                         if (analysis == "dbscan") {
                             distances <- dbscan::kNNdist(dist_matrix, k = input$cluster_k)
@@ -1972,6 +1976,7 @@
                 }
 
                 runApp(shinyApp(ui, server))
+                invisible(picked)
 
             }
 

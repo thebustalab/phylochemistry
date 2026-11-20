@@ -95,7 +95,7 @@
                   options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
                   for (option in options) { # option = 4
                       if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
-                          doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+                          doi <- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
                           break
                       } else {next}
                   }

@@ -631,7 +631,7 @@
                         )
                 }
 
-                plots <<- plots
+                assign("plots", plots, envir = globalenv())  # documented side output: the per-file plots
 
                 out <- do.call(rbind, out)
 
@@ -671,8 +671,12 @@
                 files <- googledrive::drive_ls(folder_URL)
                 file <- 1
                 prop <- 0.4
-                corner_points_x <<- vector()
-                corner_points_y <<- vector()
+                corner_points_x <- vector()
+                corner_points_y <- vector()
+                ## App state: the server's `<<-` assignments update these, not the global environment.
+                imRed <- photo_metadata <- image_as_df <- image_calibrated <- image_points <- NULL
+                sample_pixel_data <- sub_data <- dat <- swatch_data <- reference_pixel_output <- NULL
+                mode_reference_value_R <- mode_reference_value_G <- mode_reference_value_B <- NULL
 
                 ui <- fluidPage(
                     verticalLayout(
@@ -802,6 +806,7 @@
                             if ( !is.null(input$calibrated_photograph_selected_points) ) {
 
                                 sample_pixel_data <<- image_calibrated[input$calibrated_photograph_selected_points,]
+                                assign("sample_pixel_data", sample_pixel_data, envir = globalenv())  # result table, as before
 
                                 ggplot() +
                                     geom_tile(
@@ -1331,6 +1336,7 @@
                                     G = image_points$G,
                                     B = image_points$B
                                 )
+                                assign("reference_pixel_output", reference_pixel_output, envir = globalenv())  # result table, as before
 
                             } else { NULL }
 
