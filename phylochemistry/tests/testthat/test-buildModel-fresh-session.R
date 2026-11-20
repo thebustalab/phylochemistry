@@ -16,9 +16,10 @@ test_that("buildModel() random forests and logistic regression run with only phy
     res <- callr::r(function() {
         suppressPackageStartupMessages(library(phylochemistry))
         attached <- search()
+        loaded_at_library <- loadedNamespaces()
         run <- function(expr) tryCatch({ force(expr); NULL }, error = function(e) conditionMessage(e))
         set.seed(123)
-        out <- list(attached = attached)
+        out <- list(attached = attached, loaded_at_library = loaded_at_library)
         ## the chapter imputes missing values first; here, keep the complete columns
         md <- metabolomics_data[, colSums(is.na(metabolomics_data)) == 0]
         metabolites <- setdiff(colnames(md)[-(1:2)], "Valine")[1:10]
@@ -63,6 +64,9 @@ test_that("buildModel() random forests and logistic regression run with only phy
 
     ## the point of the subprocess: nothing but phylochemistry (and base R) on the search path
     expect_false(any(c("package:parsnip", "package:workflows", "package:tune", "package:generics") %in% res$attached))
+    ## the book-only Imports (R/zzz_book_imports.R) must stay unloaded: loading ggtern, ggside or ggpp
+    ## re-registers ggplot2's print/+ methods for the whole session
+    expect_false(any(c("ggtern", "ggside", "ggpp") %in% res$loaded_at_library))
     expect_null(res$rf_regression)
     expect_null(res$rf_classification)
     expect_null(res$logistic_regression)
