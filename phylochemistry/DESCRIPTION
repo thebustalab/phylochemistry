@@ -1,0 +1,15 @@
+Package: phylochemistry
+Title: Chemical, Statistical and Sequence Analyses for Integrated Bioanalytical Chemistry
+Version: 1.0.0
+Authors@R: person("Lucas", "Busta", email = "bust0037@d.umn.edu", role = c("aut", "cre"))
+Description: Data visualization helpers, statistics verbs, matrix analyses
+    (principal components, clustering, distances, networks), predictive models,
+    sequence and phylogenetic tools, and the teaching datasets used in the
+    'Integrated Bioanalytical Chemistry' course book and the Busta lab.
+License: MIT + file LICENSE
+URL: https://github.com/thebustalab/phylochemistry
+BugReports: https://github.com/thebustalab/phylochemistry/issues
+Depends: R (>= 4.1.0)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
