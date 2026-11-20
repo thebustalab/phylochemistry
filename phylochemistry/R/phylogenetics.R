@@ -388,7 +388,7 @@
                     tree <- tree_in
                 } else if (is.data.frame(tree_in) && "node" %in% colnames(tree_in)) {
                     fortified_tree <- tree_in
-                    tree <- ggtree::as.phylo(fortified_tree)
+                    tree <- ape::as.phylo(fortified_tree)
                 } else {
                     stop("tree_in must be either a file path, a phylo object, or a fortified tree")
                 }
@@ -439,7 +439,7 @@
                 if (is.data.frame(tree) && "node" %in% colnames(tree)) {
                     message("Warning: Data columns are only being preserved for select members of the original data frame.")
                     fortified_tree <- tree
-                    tree <- ggtree::as.phylo(fortified_tree)
+                    tree <- ape::as.phylo(fortified_tree)
                 }
 
                 ## Drop all species names not in the association list

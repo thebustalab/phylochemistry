@@ -1124,7 +1124,7 @@
                             writeFasta(
                                 XStringSet = Biostrings::translate(Biostrings::readDNAStringSet(transcriptomes[transcriptome]), if.fuzzy.codon = "solve"),
                                 fasta_out_path = paste(transcriptomes[transcriptome], "trans", sep = "_"),
-                                type = "AA"
+                                fasta_type = "AA"
                             )
                             transcriptomes[transcriptome] <- paste(transcriptomes[transcriptome], "trans", sep = "_")
                         }
@@ -1731,7 +1731,7 @@
                                 ## Extract ORFs, read in ORFs, translate them, then align them
 
                                     Biostrings::writeXStringSet(nucl_seqs_set, filepath = paste0(alignment_out_path, "_unaligned"))
-                                    extractORFs(file = paste0(alignment_out_path, "_unaligned"), write_out_ORFs = TRUE)
+                                    extractORFs(file_in_path = paste0(alignment_out_path, "_unaligned"), write_out_ORFs = TRUE)
                                     if (file.exists(paste0(alignment_out_path, "_unaligned"))) {file.remove(paste0(alignment_out_path, "_unaligned"))}
                                 
                                     ## The ORF nucleotides are what the peptides are translated from, so they
@@ -1771,7 +1771,7 @@
             #                         file.remove(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))}
 
             #                     ## Extract ORFs
-            #                         extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
+            #                         extractORFs(file_in_path = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
 
             #                     ## Translate the nucleotide sequences and write out *_amin_seqs.fa
             #                         nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
@@ -1811,7 +1811,7 @@
                                     file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))}
 
                                 ## Extract ORFs
-                                    extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
+                                    extractORFs(file_in_path = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
 
                                 ## Translate the nucleotide sequences and write out *_amin_seqs.fa
                                     nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
@@ -2568,7 +2568,11 @@
                 .check_bioc(c("Biostrings"), "reverseTranslate")
 
                 # Read the codon table for the specified organism
-                codon_tables <- readMonolist("https://thebustalab.github.io/phylochemistry/sample_data/codon_tables.csv")
+                codon_tables <- tryCatch(
+                    suppressWarnings(readMonolist("https://thebustalab.github.io/phylochemistry/sample_data/codon_tables.csv")),
+                    error = function(e) stop("reverseTranslate() needs the codon usage table sample_data/codon_tables.csv, ",
+                                             "which is not available on the course website, so this function cannot run.", call. = FALSE)
+                )
                 codon_tables$Genus_species <- paste(codon_tables$Genus, codon_tables$species, sep = "_")
                 codon_tables <- dplyr::filter(codon_tables, Genus_species == organism)
                     
@@ -2737,7 +2741,7 @@
                 }
 
                 # Read alignment, create basic plottable
-                    AA_phydat <- as.data.frame(as.character(phangorn::read.aa(file = infile, format = "fasta")))
+                    AA_phydat <- as.data.frame(as.character(as.matrix(ape::read.FASTA(file = infile, type = "AA"))))
                     AA_phydat <- as.data.frame(t(AA_phydat))
                     colnames(AA_phydat) <- as.character(seq(1,dim(AA_phydat)[2],1))
                     AA_alignment_df <-  cbind(  
@@ -2863,7 +2867,7 @@
                     if (funct_assoc == TRUE) {
                         for (j in 1:length(funct_assoc_data)) {
                             # Subset alignment matrices for the two variables
-                                alignment_matrix <- toupper(t(as.data.frame(as.character(phangorn::read.aa(file = infile, format = "fasta")))))
+                                alignment_matrix <- toupper(t(as.data.frame(as.character(as.matrix(ape::read.FASTA(file = infile, type = "AA"))))))
                                 
                                 spec1 <- list()
                                 spec1[[1]] <- monolist[,colnames(monolist) == funct_assoc_data[j]] == as.character(gsub("~.*$", "", funct_assoc_data[j]))
@@ -3101,7 +3105,7 @@
                             head(pdb_frame)
 
                         ## Read in alignment
-                            AA_phydat <- as.data.frame(as.character(phangorn::read.aa(file = alignment_in_path, format="fasta")))
+                            AA_phydat <- as.data.frame(as.character(as.matrix(ape::read.FASTA(file = alignment_in_path, type = "AA"))))
                             alignment_sequence <- as.data.frame(AA_phydat)[,grep(pdb_name_in_alignment, colnames(as.data.frame(AA_phydat)))]
                             alignment_frame <- data.frame(alignment_sequence = alignment_sequence, alignment_position = seq(1,length(alignment_sequence),1))
                             head(alignment_frame)

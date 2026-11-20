@@ -454,7 +454,7 @@
 
                 # Fill in with measurements if specified
                     if ( !is.null(measurements_monolist_in_path) ) {
-                        measurements_monolist <- readMonolist(monolist = measurements_monolist_in_path)
+                        measurements_monolist <- readMonolist(monolist_in_path = measurements_monolist_in_path)
                         colnames(measurements_monolist)[!colnames(measurements_monolist) %in% c("sample_unique_ID", "analyte_unique_ID")] <- "value"
 
                         analyte_unique_ID_col <- grep("analyte_unique_ID", polylist[centroid_location[2],])

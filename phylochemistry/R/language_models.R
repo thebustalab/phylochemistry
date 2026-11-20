@@ -148,6 +148,7 @@
           server_token = Sys.getenv("EMBED_SERVER_TOKEN", "")
         ) {
           # deps: imported through the package NAMESPACE (no longer attached to the session)
+          verbose <- FALSE  # read by post_with_retries(); embedText() has no verbose argument
 
           # --- prep input ----
           df <- as_tibble(df)
@@ -588,6 +589,9 @@
         #' @param input_type Not yet documented.
         #' @param model_name Not yet documented.
         #' @param seq_column Not yet documented.
+        #' @param local_script For `platform = "local"`: path to a Python script that embeds the
+        #'   sequences in a FASTA file and writes one row per sequence to a CSV file. Required for that platform.
+        #' @param python_path For `platform = "local"`: the Python executable to run `local_script` with.
         #' @export
         embedAminoAcids <- function(
                 amino_acid_stringset = NULL,
@@ -597,7 +601,9 @@
                 platform = c("nvidia", "biolm", "local"),
                 input_type = c("amino_acid_stringset", "dataframe"),
                 model_name = c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m", "esm2_t30_150M_UR50D"),
-                seq_column = NULL
+                seq_column = NULL,
+                local_script = NULL,
+                python_path = "python3"
             ) {
               # Select first option for parameters
               platform <- platform[1]
@@ -733,37 +739,23 @@
                 embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
                 return(embeddings)
               }
-              # 
-              # if (platform == "local") {
-              #   # Create a temporary FASTA file with all sequences
-              #   temp_dir <- tempdir()
-              #   fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
-              #   output_file <- file.path(temp_dir, "temp_embeddings.csv")
-              #   Biostrings::writeXStringSet(amino_acid_stringset, fasta_file)
-              #   
-              #   # Run the Python script to compute embeddings
-              #   python_path <- "/usr/bin/python3"  # Adjust path if necessary
-              #   python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Adjust script path as needed
-              #   command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
-              #   system(command, intern = TRUE)
-              #   
-              #   if (!file.exists(output_file)) {
-              #     stop("Python script did not produce an output file.")
-              #   }
-              #   embeddings <- read.csv(output_file)
-              #   unlink(c(fasta_file, output_file))
-              # }
-              # 
-              # # Combine embeddings with original sequence names
-              # if (platform %in% c("biolm", "nvidia")) {
-              #   
-              #   colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-              #   embeddings_df <- cbind(name = seq_names, embeddings_df)
-              #   return(as_tibble(embeddings_df))
-              # } else if (platform == "local") {
-              #   embeddings_df <- as.data.frame(embeddings)
-              #   embeddings_df <- cbind(name = seq_names, embeddings_df)
-              #   return(as_tibble(embeddings_df))
-              # }
+              if (platform == "local") {
+                # Runs a local encoder script as: python_path local_script input.fasta output.csv model_name
+                # The script writes one row of embedding values per sequence to output.csv.
+                if (is.null(local_script) || !nzchar(local_script)) {
+                  stop("platform = 'local' needs local_script = the path to a protein-encoding Python script ",
+                       "(called as: python local_script input.fasta output.csv model_name).", call. = FALSE)
+                }
+                if (!file.exists(local_script)) stop("local_script not found: ", local_script, call. = FALSE)
+                fasta_file <- tempfile(fileext = ".fasta")
+                output_file <- tempfile(fileext = ".csv")
+                on.exit(unlink(c(fasta_file, output_file)), add = TRUE)
+                Biostrings::writeXStringSet(amino_acid_stringset, fasta_file)
+                system2(python_path, c(shQuote(local_script), shQuote(fasta_file), shQuote(output_file), model_name))
+                if (!file.exists(output_file)) stop("The local script did not produce an output file.", call. = FALSE)
+                embeddings <- utils::read.csv(output_file)
+                embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
+                return(embeddings)
+              }
             } 
 

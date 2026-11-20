@@ -12,7 +12,9 @@ embedAminoAcids(
   platform = c("nvidia", "biolm", "local"),
   input_type = c("amino_acid_stringset", "dataframe"),
   model_name = c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m", "esm2_t30_150M_UR50D"),
-  seq_column = NULL
+  seq_column = NULL,
+  local_script = NULL,
+  python_path = "python3"
 )
 }
 \arguments{
@@ -31,6 +33,11 @@ embedAminoAcids(
 \item{model_name}{Not yet documented.}
 
 \item{seq_column}{Not yet documented.}
+
+\item{local_script}{For \code{platform = "local"}: path to a Python script that embeds the
+sequences in a FASTA file and writes one row per sequence to a CSV file. Required for that platform.}
+
+\item{python_path}{For \code{platform = "local"}: the Python executable to run \code{local_script} with.}
 }
 \description{
 Embed amino acid sequences with a protein language model

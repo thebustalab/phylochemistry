@@ -279,7 +279,7 @@
 
                         data$value_norm <- data$value
                         for (i in 1:length(unique(data$var1))) {
-                            data$value_norm[data$var1==unique(data$var1)[i]] <- phylochemistry::normalize(
+                            data$value_norm[data$var1==unique(data$var1)[i]] <- normalize(
                                 data$value[data$var1==unique(data$var1)[i]],
                                 old_min = min(as.numeric(data$value[data$var1==unique(data$var1)[i]])),
                                 old_max = max(as.numeric(data$value[data$var1==unique(data$var1)[i]])),
@@ -298,7 +298,7 @@
 
                         data$value_norm <- data$value
                         for (i in 1:length(unique(data$var2))) {
-                            data$value_norm[data$var2==unique(data$var2)[i]] <- phylochemistry::normalize(
+                            data$value_norm[data$var2==unique(data$var2)[i]] <- normalize(
                                 data$value[data$var2==unique(data$var2)[i]],
                                 old_min = min(as.numeric(data$value[data$var2==unique(data$var2)[i]])),
                                 old_max = max(as.numeric(data$value[data$var2==unique(data$var2)[i]])),
