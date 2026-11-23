@@ -175,7 +175,7 @@ test_that("model-first statistics verbs behave as the course expects", {
     tk_hy <- tukeyTest(hy, y ~ g)
     base_hy <- TukeyHSD(aov(y ~ g, hy))$g
     check(identical(paste0(tk_hy$group2, "-", tk_hy$group1), rownames(base_hy)), "data path: hyphenated names come back intact, same orientation as TukeyHSD")
-    check(isTRUE(all.equal(tk_hy$p.adj, signif(unname(base_hy[, "p adj"]), 3))), "data path: hyphenated p.adj match TukeyHSD (rstatix rounds to 3 significant figures)")
+    check(isTRUE(all.equal(signif(tk_hy$p.adj, 3), signif(unname(base_hy[, "p adj"]), 3))), "data path: hyphenated p.adj match TukeyHSD at 3 significant figures (older rstatix rounds, newer does not)")
     check(isTRUE(all.equal(tk_hy$estimate, unname(base_hy[, "diff"]))), "data path: hyphenated estimates match TukeyHSD")
     check(identical(pGroups(tk_hy)$group, pGroups(tukeyTest(buildModel(data = hy, formula = y ~ g)))$group), "data path letters = model path letters with hyphens")
     hy_g <- dplyr::group_by(transform(hy, site = rep(c("s1", "s2"), length.out = 15)), site)
